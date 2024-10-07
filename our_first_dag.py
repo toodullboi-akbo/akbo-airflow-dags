@@ -18,6 +18,6 @@ with DAG(
 ) as dag:
     task1 = BashOperator(
         task_id = "first_task",
-        bash_command="echo hello, airflow!"
+        bash_command="python src/entire_batter_yearly.py"
     )
     pass
