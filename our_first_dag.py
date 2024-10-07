@@ -1,0 +1,19 @@
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+
+from datetime import datetime, timedelta
+
+default_args = {
+    "owner" : "toodullboi",
+    "retries" : 5,
+    "retry_delay" : timedelta(minutes=2)
+}
+
+with DAG(
+    dag_id = "our_first_dag",
+    default_args=default_args,
+    description = "This is mine",
+    start_date = datetime(2024, 10, 7, 2),
+    schedule_interval="@daily"
+) as dag:
+    pass
