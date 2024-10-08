@@ -18,6 +18,7 @@ with DAG(
 ) as dag:
     task1 = BashOperator(
         task_id = "first_task",
-        bash_command="python /opt/airflow/dags/repo/src/entire_batter_yearly.py"
+        bash_command="python src/entire_batter_yearly.py"
     )
-    pass
+
+    task1
