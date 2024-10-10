@@ -18,7 +18,7 @@ with DAG(
 ) as dag:
     task1 = BashOperator(
         task_id = "first_task",
-        bash_command="pwd"
+        bash_command="python src/entire_batter_yearly.py"
     )
 
     task1
