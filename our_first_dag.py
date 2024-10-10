@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 default_args = {
     "owner" : "toodullboi",
     "retries" : 5,
-    "retry_delay" : timedelta(minutes=2)
+    "retry_delay" : timedelta(seconds=5)
 }
 
 with DAG(
