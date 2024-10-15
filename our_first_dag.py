@@ -18,7 +18,7 @@ with DAG(
 ) as dag:
     task1 = BashOperator(
         task_id = "first_task",
-        bash_command="python src/printSomethingTest.py"
+        bash_command="pwd"
     )
 
     task1
