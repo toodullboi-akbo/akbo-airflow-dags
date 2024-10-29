@@ -14,12 +14,7 @@ with DAG(
 ) as dag:
     task1 = BashOperator(
         task_id = "first_task",
-        bash_command="ls"
+        bash_command="ls /opt/airflow/dags/repo"
     )
 
-    task2 = BashOperator(
-        task_id = "second_task",
-        bash_command="ls ../"
-    )
-
-    task1 >> task2
+    task1
