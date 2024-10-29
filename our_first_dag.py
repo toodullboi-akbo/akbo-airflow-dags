@@ -16,7 +16,7 @@ with DAG(
 ) as dag:
     task1 = BashOperator(
         task_id = "first_task",
-        bash_command="ls"
+        bash_command="python /opt/airflow/dags/src/printSomethingTest.py"
     )
 
     task1
