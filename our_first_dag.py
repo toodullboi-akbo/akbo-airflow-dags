@@ -18,8 +18,8 @@ with DAG(
     )
 
     task2 = BashOperator(
-        task_id = "first_task",
+        task_id = "second_task",
         bash_command="ls ../"
     )
 
-    task1 > task2
+    task1 >> task2
