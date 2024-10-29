@@ -5,8 +5,6 @@ from datetime import datetime, timedelta
 
 default_args = {
     "owner" : "toodullboi",
-    "retries" : 5,
-    "retry_delay" : timedelta(seconds=5)
 }
 
 with DAG(
@@ -16,7 +14,12 @@ with DAG(
 ) as dag:
     task1 = BashOperator(
         task_id = "first_task",
-        bash_command="python src/printSomethingTest.py"
+        bash_command="ls"
     )
 
-    task1
+    task2 = BashOperator(
+        task_id = "first_task",
+        bash_command="ls ../"
+    )
+
+    task1 > task2
