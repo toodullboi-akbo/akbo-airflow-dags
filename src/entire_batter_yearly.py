@@ -217,8 +217,10 @@ def get_n_save_whole_year_batter_data() -> set:
         })
 
         
-
-        batter_file_path = os.path.join(BATTER_DATASET_DIR,f"Batter_{year}.parquet")
+        if IS_BLOB:
+            blob_name_path = os.path.join(DATASET_NAME,BATTER_DATASET_NAME,f"Batter_{year}.parquet")
+        else:
+            batter_file_path = os.path.join(BATTER_DATASET_DIR,f"Batter_{year}.parquet")
 
 
         df = df.replace("-",np.nan)
@@ -236,7 +238,16 @@ def get_n_save_whole_year_batter_data() -> set:
         df['PPA'] = df['PPA'].astype(float)
         df['XR'] = df['XR'].astype(float)
 
-        df.to_parquet(batter_file_path, engine="pyarrow",index=False)
+        if IS_BLOB:
+            parquet_data = df.to_parquet(engine="pyarrow", index=False)
+            wasb_hook.load_string(
+                string_data=parquet_data,
+                container_name=container_name,
+                blob_name=blob_name_path,
+                overwrite=True
+            )
+        else:
+            df.to_parquet(batter_file_path, engine="pyarrow",index=False)
 
     return batter_number_list
 
@@ -248,7 +259,18 @@ if __name__ == "__main__":
         df = pd.DataFrame({
             "Numbers" : batter_number_list
         })
-        df.to_csv(ENTIRE_BATTER_NUMBER_PATH,encoding='utf-8',mode='w',index=False)
+        
+        if IS_BLOB:
+            blob_name_path = ENTIRE_BATTER_NUMBER_NAME_PATH
+            csv_data = df.to_csv(encoding='utf-8',mode='w',index=False)
+            wasb_hook.load_string(
+                string_data=csv_data,
+                container_name=container_name,
+                blob_name=blob_name_path,
+                overwrite=True
+            )
+        else:
+            df.to_csv(ENTIRE_BATTER_NUMBER_PATH,encoding='utf-8',mode='w',index=False)
 
         end_time = time.time()
         print(f"{end_time-st_time} s")
