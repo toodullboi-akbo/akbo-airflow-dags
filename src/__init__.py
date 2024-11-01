@@ -21,8 +21,6 @@ driver = webdriver.Remote(
     options=options
 )
 ################
-pd.set_option("future.no_silent_downcasting", True)
-################
 DATASET_NAME = "kbo-datasets"
 BATTER_DATASET_NAME = "batter_datasets"
 PITCHER_DATASET_NAME = "pitcher_datasets"
