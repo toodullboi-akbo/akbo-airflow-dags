@@ -16,7 +16,10 @@ if IS_BLOB:
 ###############
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
-driver = webdriver.Chrome(options=options) 
+driver = webdriver.Remote(
+    command_executor='http://seleniarm:4444/wd/hub',
+    options=options
+)
 ################
 pd.set_option("future.no_silent_downcasting", True)
 ################
