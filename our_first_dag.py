@@ -22,4 +22,4 @@ with DAG(
         bash_command="python /opt/airflow/dags/repo/src/entire_batter_daily.py"
     )
 
-    task1 >> task2
+    task2
