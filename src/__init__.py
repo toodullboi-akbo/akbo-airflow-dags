@@ -5,28 +5,32 @@ import traceback
 import numpy as np
 import pandas as pd
 from airflow.providers.microsoft.azure.hooks.wasb import WasbHook
+from io import StringIO
 
+
+##################################################################
 ###############
 IS_BLOB = True
-
+###############
 if IS_BLOB:
     wasb_hook = WasbHook(wasb_conn_id="my_wasb_storage_account")
     container_name = "airflow-outputs"
-
 ###############
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
-driver = webdriver.Remote(
-    command_executor='http://seleniarm:4444/wd/hub',
-    options=options
-)
+if IS_BLOB:
+    driver = webdriver.Remote(
+        command_executor='http://seleniarm:4444/wd/hub',
+        options=options
+    )
+else:
+    driver = webdriver.Chrome(options=options)
 ################
 DATASET_NAME = "kbo-datasets"
 BATTER_DATASET_NAME = "batter_datasets"
 PITCHER_DATASET_NAME = "pitcher_datasets"
 FIELDER_DATASET_NAME = "fielding_datasets"
 RUNNER_DATASET_NAME = "runner_datasets"
-################
 if not IS_BLOB:
     DATASET_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), DATASET_NAME)
     if not os.path.exists(DATASET_DIR):
@@ -43,25 +47,19 @@ if not IS_BLOB:
     RUNNER_DATASET_DIR = os.path.join(DATASET_DIR, RUNNER_DATASET_NAME)
     if not os.path.exists(RUNNER_DATASET_DIR):
         os.mkdir(RUNNER_DATASET_DIR)
-
-
 ###############
-if not IS_BLOB:
-    ENTIRE_BATTER_NUMBER_PATH = os.path.join(DATASET_DIR,"Entire_Batter_Number.csv")
-    ENTIRE_PITCHER_NUMBER_PATH = os.path.join(DATASET_DIR,"Entire_Pitcher_Number.csv")
-    ENTIRE_FIELDER_NUMBER_PATH = os.path.join(DATASET_DIR,"Entire_Fielder_Number.csv")
-else: 
+if IS_BLOB:
     ENTIRE_BATTER_NUMBER_NAME_PATH = os.path.join(DATASET_NAME,"Entire_Batter_Number.csv")
     ENTIRE_PITCHER_NUMBER_NAME_PATH = os.path.join(DATASET_NAME,"Entire_Pitcher_Number.csv")
     ENTIRE_FIELDER_NUMBER_NAME_PATH = os.path.join(DATASET_NAME,"Entire_Fielder_Number.csv")
-
+else: 
+    ENTIRE_BATTER_NUMBER_PATH = os.path.join(DATASET_DIR,"Entire_Batter_Number.csv")
+    ENTIRE_PITCHER_NUMBER_PATH = os.path.join(DATASET_DIR,"Entire_Pitcher_Number.csv")
+    ENTIRE_FIELDER_NUMBER_PATH = os.path.join(DATASET_DIR,"Entire_Fielder_Number.csv")
 ###############
-
 MIN_YEAR = "2023" # MIN_YEAR + 1 까지 저장함
 CONST_SLEEP_TIME = 1
-
 ###############
-
 NUM_PROCESS = 3
 SLEEP_TIME_BEFORE_RETRY = 5
 MAX_RETRIES = 3
