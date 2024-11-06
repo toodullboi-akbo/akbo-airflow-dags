@@ -8,6 +8,8 @@ import datetime
 import time
 from multiprocessing import Process
 
+DYNAMIC_SLEEP_TIME = CONST_SLEEP_TIME
+#####
 
 def batter_situation_work(batter_ID_tuple : tuple, attempt : int):
     '''
@@ -18,6 +20,7 @@ def batter_situation_work(batter_ID_tuple : tuple, attempt : int):
             get_n_save_batter_situation_data(batter_ID)
     except Exception as e:
         if attempt < MAX_RETRIES:
+            DYNAMIC_SLEEP_TIME = DYNAMIC_SLEEP_TIME * 2
             for item in traceback.format_exception(e):
                 print(item)
             print("let's retry")
@@ -34,10 +37,10 @@ def get_n_save_batter_situation_data(batterID : int):
     '''
     def set_initial_page_setting() :
         driver.get(f'https://www.koreabaseball.com/Record/Player/HitterDetail/Situation.aspx?playerId={batterID}')
-        driver.implicitly_wait(3)
+        driver.implicitly_wait(DYNAMIC_SLEEP_TIME)
         cat_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlSeries'))
         cat_selector.select_by_index(0) # 0 -> 정규시즌
-        driver.implicitly_wait(2)
+        driver.implicitly_wait(DYNAMIC_SLEEP_TIME)
 
     result = []
 
@@ -49,7 +52,7 @@ def get_n_save_batter_situation_data(batterID : int):
     for year_idx in range(0,len(year_selector.options)):
         year_selector = Select(driver.find_element(by=By.NAME, value="ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlYear"))
         year_selector.select_by_index(year_idx)
-        driver.implicitly_wait(2)
+        driver.implicitly_wait(DYNAMIC_SLEEP_TIME)
 
         year_data = driver.find_element(by=By.XPATH, value='//*[@id="contents"]/div[2]/div[2]/h6')
         year = year_data.text.split(' ')[0]

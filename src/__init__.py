@@ -58,7 +58,7 @@ else:
     ENTIRE_FIELDER_NUMBER_PATH = os.path.join(DATASET_DIR,"Entire_Fielder_Number.csv")
 ###############
 MIN_YEAR = "2023" # MIN_YEAR + 1 까지 저장함
-CONST_SLEEP_TIME = 1
+CONST_SLEEP_TIME = 3
 ###############
 NUM_PROCESS = 3
 SLEEP_TIME_BEFORE_RETRY = 5
