@@ -9,6 +9,9 @@ import time
 from multiprocessing import Process
 from fractions import Fraction
 
+DYNAMIC_SLEEP_TIME = CONST_SLEEP_TIME
+#####
+
 def pitcher_daily_work(pitcher_ID_tuple : tuple, attempt : int):
     '''
     multiprocessing 돌리는 함수
@@ -18,6 +21,7 @@ def pitcher_daily_work(pitcher_ID_tuple : tuple, attempt : int):
             get_n_save_pitcher_daily_data(pitcherID)
     except Exception as e:
         if attempt < MAX_RETRIES:
+            DYNAMIC_SLEEP_TIME = DYNAMIC_SLEEP_TIME * 2
             for item in traceback.format_exception(e):
                 print(item)
             print("let's retry")
@@ -35,10 +39,10 @@ def get_n_save_pitcher_daily_data(pitcherID : int):
     '''
     def set_initial_page_setting() :
         driver.get(f'https://www.koreabaseball.com/Record/Player/PitcherDetail/Daily.aspx?playerId={pitcherID}')
-        driver.implicitly_wait(3)
+        driver.implicitly_wait(DYNAMIC_SLEEP_TIME)
         cat_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlSeries'))
         cat_selector.select_by_index(0) # 0 -> 정규시즌
-        driver.implicitly_wait(2)
+        driver.implicitly_wait(DYNAMIC_SLEEP_TIME)
 
     result = []
     # driver.get(f'https://www.koreabaseball.com/Record/Player/PitcherDetail/Daily.aspx?playerId={pitcherID}')
@@ -51,7 +55,7 @@ def get_n_save_pitcher_daily_data(pitcherID : int):
     for year_idx in range(0,len(year_selector.options)):
         year_selector = Select(driver.find_element(by=By.NAME, value="ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlYear"))
         year_selector.select_by_index(year_idx)
-        driver.implicitly_wait(2)
+        driver.implicitly_wait(DYNAMIC_SLEEP_TIME)
 
         year_data = driver.find_element(by=By.XPATH, value='//*[@id="contents"]/div[2]/div[2]/h6')
         year = year_data.text.split(' ')[0][:-1]
