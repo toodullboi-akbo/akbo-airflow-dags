@@ -131,7 +131,7 @@ def get_n_save_whole_year_runner_data() -> set:
             df.to_parquet(runner_file_path, engine="pyarrow",index=False)
 
 
-    return runner_file_path
+    return runner_number_list
 
 
 if __name__ == "__main__":

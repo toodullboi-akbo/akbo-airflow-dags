@@ -55,14 +55,14 @@ with DAG(
         bash_command="python /opt/airflow/dags/repo/src/entire_runner.py"
     )
 
-    # startTask = EmptyOperator(task_id="stark_task")
+    startTask = EmptyOperator(task_id="stark_task")
 
 
-    # startTask >> [batter_yearly_task, pitcher_yearly_task, fielder_yearly_task, runner_yearly_task]
-    # batter_yearly_task >> [batter_sit_task, batter_daily_task]
-    # pitcher_yearly_task >> [pitcher_sit_task, pitcher_daily_task]
-    # fielder_yearly_task
-    # runner_yearly_task
+    startTask >> [batter_yearly_task, pitcher_yearly_task, fielder_yearly_task, runner_yearly_task]
+    batter_yearly_task >> [batter_sit_task, batter_daily_task]
+    pitcher_yearly_task >> [pitcher_sit_task, pitcher_daily_task]
+    fielder_yearly_task
+    runner_yearly_task
 
 
-    batter_yearly_task >> batter_daily_task >> batter_sit_task >> pitcher_yearly_task >> pitcher_daily_task >> pitcher_sit_task >> fielder_yearly_task >> runner_yearly_task
+    # batter_yearly_task >> batter_daily_task >> batter_sit_task >> pitcher_yearly_task >> pitcher_daily_task >> pitcher_sit_task >> fielder_yearly_task >> runner_yearly_task
