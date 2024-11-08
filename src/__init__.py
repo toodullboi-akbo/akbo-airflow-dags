@@ -20,7 +20,7 @@ options = webdriver.ChromeOptions()
 options.add_argument('headless')
 if IS_BLOB:
     driver = webdriver.Remote(
-        command_executor='http://selenium-grid-selenium-hub.airflow.svc:4444',
+        command_executor='http://selenium-grid-selenium-hub.airflow.svc:4444/wd/hub',
         options=options
     )
 else:
