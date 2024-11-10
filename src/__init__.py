@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver.remote.remote_connection import RemoteConnection
 import os
 import sys
 import traceback
@@ -19,8 +20,12 @@ if IS_BLOB:
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
 if IS_BLOB:
+    command_executor_url = 'http://selenium-grid-selenium-hub.airflow.svc:4444'
+    connection_timeout = 500
+    remote_connection = RemoteConnection(command_executor_url, keep_alive=True)
+    remote_connection.set_timeout(connection_timeout)
     driver = webdriver.Remote(
-        command_executor='http://selenium-grid-selenium-hub.airflow.svc:4444',
+        command_executor=remote_connection,
         options=options
     )
 else:
