@@ -1,5 +1,4 @@
 from selenium import webdriver
-from selenium.webdriver.remote.remote_connection import RemoteConnection
 import os
 import sys
 import traceback
@@ -7,7 +6,7 @@ import numpy as np
 import pandas as pd
 from airflow.providers.microsoft.azure.hooks.wasb import WasbHook
 from io import StringIO
-
+import requests
 
 ##################################################################
 ###############
@@ -22,10 +21,18 @@ options.add_argument('headless')
 if IS_BLOB:
     command_executor_url = 'http://selenium-grid-selenium-hub.airflow.svc:4444'
     connection_timeout = 500
-    remote_connection = RemoteConnection(command_executor_url, keep_alive=True)
-    remote_connection.set_timeout(connection_timeout)
+
+    try:
+        response = requests.get(command_executor_url, timeout=connection_timeout)
+        response.raise_for_status()  # Check for successful status
+        print("Selenium Grid is reachable.")
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to connect to Selenium Grid: {e}")
+        # Optionally, exit or retry depending on your use case
+        raise SystemExit("Unable to reach Selenium Grid within the timeout period.")
+
     driver = webdriver.Remote(
-        command_executor=remote_connection,
+        command_executor=command_executor_url,
         options=options
     )
 else:
