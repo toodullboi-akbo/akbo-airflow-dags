@@ -15,6 +15,8 @@ def batter_situation_work(batter_ID_tuple : tuple, attempt : int):
     '''
     multiprocessing 돌리는 함수
     '''
+    global DYNAMIC_SLEEP_TIME    
+    
     try:
         for batter_ID in batter_ID_tuple:
             get_n_save_batter_situation_data(batter_ID)

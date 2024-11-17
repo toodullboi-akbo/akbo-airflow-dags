@@ -16,6 +16,8 @@ def pitcher_situation_work(pitcher_ID_tuple : tuple, attempt : int):
     '''
     multiprocessing 돌리는 함수
     '''
+    global DYNAMIC_SLEEP_TIME
+    
     try:
         for pitcherID in pitcher_ID_tuple:
             get_n_save_pitcher_situation_data(pitcherID)
