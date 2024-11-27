@@ -9,7 +9,8 @@ default_args = {
 }
 
 # Define the DAG
-with DAG('spark_submit_dag',
+with DAG(
+    dag_id='spark_submit_dag',
          default_args=default_args,
          catchup=False) as dag:
 
