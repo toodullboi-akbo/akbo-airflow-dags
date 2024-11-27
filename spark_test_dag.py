@@ -19,7 +19,7 @@ with DAG(
         task_id='submit_spark_job',
         application='/opt/airflow/dags/repo/src/spark/scala-dustmq_2.13-0.1.1-SNAPSHOT.jar',  
         conn_id='spark_cluster_connection',
-        java_class='main', 
+        java_class='dustmq.main', 
         # application_args=['arg1', 'arg2'],  
         conf={'spark.executor.memory': '2g', 'spark.executor.cores': '1'},
         name='spark_airflow_job',
