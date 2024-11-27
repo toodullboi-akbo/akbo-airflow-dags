@@ -17,7 +17,7 @@ with DAG(
     # Define the SparkSubmitOperator task
     submit_spark_job = SparkSubmitOperator(
         task_id='submit_spark_job',
-        application='/opt/airflow/dags/repo/src/spark/scala-dustmq_2.13-0.1.0-SNAPSHOT.jar',  
+        application='/opt/airflow/dags/repo/src/spark/scala-dustmq_2.13-0.1.1-SNAPSHOT.jar',  
         conn_id='spark_default',
         java_class='main', 
         # application_args=['arg1', 'arg2'],  
