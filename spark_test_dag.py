@@ -1,6 +1,7 @@
 from airflow import DAG
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from datetime import datetime
+import os
 
 # Define the default arguments for the DAG
 default_args = {
@@ -17,11 +18,15 @@ with DAG(
     # Define the SparkSubmitOperator task
     submit_spark_job = SparkSubmitOperator(
         task_id='submit_spark_job',
-        application='/opt/airflow/dags/repo/src/spark/scala-dustmq_2.13-0.1.1-SNAPSHOT.jar',  
+        application="wasbs://spark-jars@"+os.getenv("AIRFLOW_STORAGE_ACCOUNT_NAME")+".blob.core.windows.net/scala-dustmq_2.13-0.1.1-SNAPSHOT.jar",
+        # '/opt/airflow/dags/repo/src/spark/scala-dustmq_2.13-0.1.1-SNAPSHOT.jar',  
         conn_id='spark_cluster_connection',
         java_class='dustmq', 
         # application_args=['arg1', 'arg2'],  
-        conf={'spark.executor.memory': '2g', 'spark.executor.cores': '1'},
+        conf={
+            'spark.executor.memory': '2g', 'spark.executor.cores': '1',
+            "spark.hadoop.fs.azure.account.key."+os.getenv("AIRFLOW_STORAGE_ACCOUNT_NAME")+".blob.core.windows.net": os.getenv('AIRFLOW_STORAGE_ACCOUNT_KEY'),
+        },  
         name='spark_airflow_job',
         verbose=True,
         packages='com.azure:azure-storage-blob:12.25.0,com.azure:azure-identity:1.11.2,'+
