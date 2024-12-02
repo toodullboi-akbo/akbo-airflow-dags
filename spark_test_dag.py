@@ -25,7 +25,7 @@ with DAG(
         # application_args=['arg1', 'arg2'],  
         conf={
             'spark.executor.memory': '2g', 'spark.executor.cores': '1',
-            "spark.hadoop.fs.azure.account.key."+os.getenv("AIRFLOW_STORAGE_ACCOUNT_NAME")+".blob.core.windows.net": os.getenv('AIRFLOW_STORAGE_ACCOUNT_KEY'),
+            "fs.azure.account.key."+os.getenv("AIRFLOW_STORAGE_ACCOUNT_NAME")+".blob.core.windows.net": os.getenv('AIRFLOW_STORAGE_ACCOUNT_KEY'),
         },  
         name='spark_airflow_job',
         verbose=True,
