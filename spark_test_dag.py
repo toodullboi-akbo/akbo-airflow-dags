@@ -18,7 +18,7 @@ with DAG(
     # Define the SparkSubmitOperator task
     submit_spark_job = SparkSubmitOperator(
         task_id='submit_spark_job',
-        application="wasbs://spark-jars@"+os.getenv("AIRFLOW_STORAGE_ACCOUNT_NAME")+".blob.core.windows.net/scala-dustmq_2.13-0.1.2-SNAPSHOT.jar",
+        application="wasbs://spark-jars@"+os.getenv("AIRFLOW_STORAGE_ACCOUNT_NAME")+".blob.core.windows.net/scala-dustmq_2.13-0.1.1-SNAPSHOT.jar",
         # '/opt/airflow/dags/repo/src/spark/scala-dustmq_2.13-0.1.1-SNAPSHOT.jar',  
         conn_id='spark_cluster_connection',
         java_class='dustmq', 
