@@ -24,8 +24,10 @@ with DAG(
         java_class='dustmq', 
         # application_args=['arg1', 'arg2'],  
         conf={
+            'spark.hadoop.fs.azure': 'org.apache.hadoop.fs.azure.NativeAzureFileSystem',
             'spark.waitAppCompletion': 'true',
-            'spark.executor.memory': '2g', 'spark.executor.cores': '1',
+            'spark.executor.memory': '2g', 
+            'spark.executor.cores': '1',
             f'spark.hadoop.fs.azure.account.key.{os.getenv("AIRFLOW_STORAGE_ACCOUNT_NAME")}.blob.core.windows.net': os.getenv("AIRFLOW_STORAGE_ACCOUNT_KEY"),
         },  
         name='spark_airflow_job',
