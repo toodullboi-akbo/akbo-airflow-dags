@@ -57,7 +57,7 @@ with DAG(
     submit_spark_job = SparkKubernetesOperator(
         task_id = "submit_spark_job",
         namespace = "airflow",
-        application_file = "/opt/airflow/dags/repo/src/spark/spark-submit.yaml",
+        application_file = "/src/spark/spark-submit.yaml",
         kubernetes_conn_id = "spark_operator_connection"
     )
 
