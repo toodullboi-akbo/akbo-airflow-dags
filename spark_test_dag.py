@@ -58,7 +58,7 @@ with DAG(
         task_id = "submit_spark_job",
         namespace = "airflow",
         application_file = "/src/spark/spark-submit.yaml",
-        kubernetes_conn_id = "spark_operator_connection"
+        # kubernetes_conn_id = "spark_operator_connection"
     )
 
     submit_spark_job
