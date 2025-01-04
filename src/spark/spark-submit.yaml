@@ -17,7 +17,7 @@ spec:
   #   - name: acr-secret
   sparkConf:
     "spark.jars.packages": >
-      "com.azure:azure-storage-blob:12.25.0,
+      com.azure:azure-storage-blob:12.25.0,
       com.azure:azure-identity:1.11.2,
       com.microsoft.azure:azure-storage:8.6.6,
       org.apache.hadoop:hadoop-azure:3.3.6,
@@ -25,7 +25,10 @@ spec:
       org.apache.hadoop:hadoop-common:3.3.6,
       org.apache.hadoop:hadoop-client:3.3.6,
       org.apache.hadoop:hadoop-client-api:3.3.6,
-      org.apache.hadoop:hadoop-client-runtime:3.3.6"
+      org.apache.hadoop:hadoop-client-runtime:3.3.6
+    
+    "spark.driver.extraJavaOptions": >
+      -Divy.cache.dir=/tmp -Divy.home=/tmp
       
   driver:
     cores: 1
