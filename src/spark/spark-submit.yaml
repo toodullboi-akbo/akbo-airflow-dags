@@ -38,7 +38,7 @@ spec:
     initContainers:
       - name: create-ivy-cache-dir
         image: busybox
-        command: ["sh", "-c", "mkdir -p /home/spark/.ivy2/cache && chmod -R 777 /home/spark/.ivy2"]
+        command: ["sh", "-c", "mkdir -p /tmp && chmod -R 777 /tmp"]
   
     serviceAccount: spark
   executor:
