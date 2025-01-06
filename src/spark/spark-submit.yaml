@@ -9,7 +9,7 @@ spec:
   image: customairflowdocker.azurecr.io/airflow-spark-operator:latest
   imagePullPolicy: Always
   mainClass: dustmq
-  mainApplicationFile: "local:///opt/spark/jars/scala-dustmq_2.13-0.1.3-SNAPSHOT.jar"
+  mainApplicationFile: "local:///opt/spark/jars/scala-dustmq_2.13-0.1.4-SNAPSHOT.jar"
   sparkVersion: "3.5.2"
   restartPolicy:
     type: OnFailure
