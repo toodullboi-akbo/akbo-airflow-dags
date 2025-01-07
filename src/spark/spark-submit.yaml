@@ -24,7 +24,7 @@ spec:
     # "spark.driver.extraJavaOptions": "-Divy.cache.dir=/tmp -Divy.home=/tmp"
       
   driver:
-    cores: 1    
+    cores: 2   
     memory: "1G"
     labels:
       version: 3.5.2
@@ -33,9 +33,9 @@ spec:
       - name: SPARK_SUBMIT_OPTS
         value: "-Dspark.jars.ivy=/tmp/ivy-cache"
   executor:
-    cores: 2
+    cores: 4
     instances: 4
-    memory: "2G"
+    memory: "3G"
     env:
       - name: SPARK_SUBMIT_OPTS
         value: "-Dspark.jars.ivy=/tmp/ivy-cache"
