@@ -33,9 +33,9 @@ spec:
       - name: SPARK_SUBMIT_OPTS
         value: "-Dspark.jars.ivy=/tmp/ivy-cache"
   executor:
-    cores: 1
-    instances: 2
-    memory: "512m"
+    cores: 2
+    instances: 4
+    memory: "1G"
     env:
       - name: SPARK_SUBMIT_OPTS
         value: "-Dspark.jars.ivy=/tmp/ivy-cache"
