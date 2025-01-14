@@ -9,7 +9,7 @@ spec:
   image: customairflowdocker.azurecr.io/airflow-spark-operator:latest
   imagePullPolicy: Always
   mainClass: dustmq
-  mainApplicationFile: "local:///opt/spark/jars/scala-dustmq_2.13-0.1.4-SNAPSHOT.jar"
+  mainApplicationFile: "local:///opt/spark/jars/kbo-data-handler_2.13-0.1.0-SNAPSHOT.jar"
   sparkVersion: "3.5.2"
   restartPolicy:
     type: OnFailure
@@ -18,8 +18,8 @@ spec:
       - https://repo1.maven.org/maven2
       - https://repository.apache.org/snapshots
     packages:
-      - org.apache.spark:spark-sql_2.13:3.5.2
       - org.apache.spark:spark-core_2.13:3.5.2
+      - org.apache.spark:spark-sql_2.13:3.5.2
       - org.apache.spark:spark-hive_2.13:3.5.2
       - com.azure:azure-storage-blob:12.25.0
       - com.azure:azure-identity:1.11.2
