@@ -4,15 +4,16 @@ import sys
 import traceback
 import numpy as np
 import pandas as pd
-from airflow.providers.microsoft.azure.hooks.wasb import WasbHook
 from io import StringIO
 import requests
+from datetime import datetime
 
 ##################################################################
 ###############
-IS_BLOB = True
+IS_BLOB = False
 ###############
 if IS_BLOB:
+    from airflow.providers.microsoft.azure.hooks.wasb import WasbHook
     wasb_hook = WasbHook(wasb_conn_id="my_wasb_storage_account")
     container_name = "airflow-outputs"
 ###############
@@ -63,15 +64,22 @@ if not IS_BLOB:
 if IS_BLOB:
     ENTIRE_BATTER_NUMBER_NAME_PATH = os.path.join(DATASET_NAME,"Entire_Batter_Number.csv")
     ENTIRE_PITCHER_NUMBER_NAME_PATH = os.path.join(DATASET_NAME,"Entire_Pitcher_Number.csv")
-    ENTIRE_FIELDER_NUMBER_NAME_PATH = os.path.join(DATASET_NAME,"Entire_Fielder_Number.csv")
+    CURRENT_BATTER_NUMBER_NAME_PATH = os.path.join(DATASET_NAME,"Current_Batter_Number.csv")
+    CURRENT_PITCHER_NUMBER_NAME_PATH = os.path.join(DATASET_NAME,"Current_Pitcher_Number.csv")
 else: 
     ENTIRE_BATTER_NUMBER_PATH = os.path.join(DATASET_DIR,"Entire_Batter_Number.csv")
     ENTIRE_PITCHER_NUMBER_PATH = os.path.join(DATASET_DIR,"Entire_Pitcher_Number.csv")
-    ENTIRE_FIELDER_NUMBER_PATH = os.path.join(DATASET_DIR,"Entire_Fielder_Number.csv")
+    CURRENT_BATTER_NUMBER_NAME_PATH = os.path.join(DATASET_DIR,"Current_Batter_Number.csv")
+    CURRENT_PITCHER_NUMBER_NAME_PATH = os.path.join(DATASET_DIR,"Current_Pitcher_Number.csv")
+
 ###############
-MIN_YEAR = "2023" # MIN_YEAR + 1 까지 저장함
+CURRENT_YEAR = str(datetime.now().year)
+LEGACY_YEAR = "2001" # LEGACY start year ( from beginnig to 2001 )
+MIN_YEAR = LEGACY_YEAR # MIN_YEAR + 1 까지 저장함
+
 CONST_SLEEP_TIME = 3
 ###############
 NUM_PROCESS = 3
 SLEEP_TIME_BEFORE_RETRY = 5
 MAX_RETRIES = 3
+###############

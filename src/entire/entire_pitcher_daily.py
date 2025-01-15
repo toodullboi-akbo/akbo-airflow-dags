@@ -1,34 +1,44 @@
-from __init__ import *
+import sys
+import os
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
 
+from __init__ import *
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 import datetime
 import time
-from multiprocessing import Process
+from multiprocessing import Process, Manager
 from fractions import Fraction
 
 DYNAMIC_SLEEP_TIME = CONST_SLEEP_TIME
 #####
 
-def pitcher_daily_work(pitcher_ID_tuple : tuple, attempt : int):
+def pitcher_daily_work(shared_number_list, index : int, attempt : int):
     '''
     multiprocessing 돌리는 함수
     '''
     global DYNAMIC_SLEEP_TIME    
 
     try:
-        for pitcherID in pitcher_ID_tuple:
+        while(len(shared_number_list) >= 1):
+            pitcherID = shared_number_list[0]
+            print(f"Process-{index} processing: {pitcherID}")
             get_n_save_pitcher_daily_data(pitcherID)
+            shared_number_list.pop(0)
+        exit(0)
     except Exception as e:
         if attempt < MAX_RETRIES:
             DYNAMIC_SLEEP_TIME = DYNAMIC_SLEEP_TIME * 2
+            print(f"ERROR while Process-{index} doing {shared_number_list[0]}")
             for item in traceback.format_exception(e):
                 print(item)
             print("let's retry")
             time.sleep(SLEEP_TIME_BEFORE_RETRY)
-            pitcher_daily_work(pitcher_ID_tuple=pitcher_ID_tuple, attempt=attempt+1)
+            pitcher_daily_work(shared_number_list, index, attempt=attempt+1)
         else:
             print("exceed retry limit")
             exit(1)
@@ -169,15 +179,24 @@ if __name__ == "__main__":
 
         print(f"number of distinct pitcher ::: {len(pitcher_number_list)}")
 
+        manager = Manager()
+        shared_number_list = [] # number_list 쪼개서 보관 예정
+
         split_index = len(pitcher_number_list)//NUM_PROCESS
 
         process_list = []
         for i in range(0, NUM_PROCESS):
             if i == NUM_PROCESS-1 : 
-                process_list.append(Process(target=pitcher_daily_work, args=(pitcher_number_list[split_index*i:],1)))
+                shared_number_list.append(manager.list(pitcher_number_list[split_index*i:]))
             else : 
-                process_list.append(Process(target=pitcher_daily_work, args=(pitcher_number_list[split_index*i:split_index*(i+1)],1)))
-
+                shared_number_list.append(manager.list(pitcher_number_list[split_index*i:split_index*(i+1)]))
+        
+        for i in range(0, NUM_PROCESS):
+            if i == NUM_PROCESS-1 : 
+                process_list.append(Process(target=pitcher_daily_work, args=(shared_number_list[i],i,1)))
+            else : 
+                process_list.append(Process(target=pitcher_daily_work, args=(shared_number_list[i],i,1)))
+                
         for process in process_list:
             process.start()
         

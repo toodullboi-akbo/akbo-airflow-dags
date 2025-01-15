@@ -1,2 +1,5 @@
 akbo-dag-env/
 secret/
+**/__pycache__/
+**/kbo-datasets/
+parquet_reader.py

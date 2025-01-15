@@ -1,0 +1,67 @@
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from airflow.operators.empty import EmptyOperator
+
+from datetime import datetime, timedelta
+
+default_args = {
+    "owner" : "toodullboi",
+    "retries" : 5,
+    "retry_delay" : timedelta(minutes=5)
+}
+
+with DAG(
+    dag_id = "Current_Year_KBO_Crawler",
+    default_args=default_args,
+    description = "crawls current year data from kbo",
+) as dag:
+    current_batter_yearly_task = BashOperator(
+        task_id = "current_batter_yearly",
+        bash_command="python /opt/airflow/dags/repo/src/current/current_batter_yearly.py"
+    )
+
+    current_batter_daily_task = BashOperator(
+        task_id = "current_batter_daily",
+        bash_command="python /opt/airflow/dags/repo/src/current/current_batter_daily.py"
+    )
+
+    current_batter_situation_task = BashOperator(
+        task_id = "current_batter_situation",
+        bash_command="python /opt/airflow/dags/repo/src/current/current_batter_situation.py"
+    )
+
+    current_pitcher_yearly_task = BashOperator(
+        task_id = "current_pitcher_yearly",
+        bash_command="python /opt/airflow/dags/repo/src/current/current_pitcher_yearly.py"
+    )
+
+    current_pitcher_daily_task = BashOperator(
+        task_id = "current_pitcher_daily",
+        bash_command="python /opt/airflow/dags/repo/src/current/current_pitcher_daily.py"
+    )
+    
+    current_pitcher_situation_task = BashOperator(
+        task_id = "current_pitcher_situation",
+        bash_command="python /opt/airflow/dags/repo/src/current/current_pitcher_situation.py"
+    )
+
+    current_fielder_task = BashOperator(
+        task_id = "current_fielder",
+        bash_command="python /opt/airflow/dags/repo/src/current/current_fielder.py"
+    )
+
+    current_runner_task = BashOperator(
+        task_id = "current_runner",
+        bash_command="python /opt/airflow/dags/repo/src/current/current_runner.py"
+    )
+
+    startTask = EmptyOperator(task_id="stark_task")
+
+
+    startTask >> [current_batter_yearly_task, current_pitcher_yearly_task, current_fielder_task, current_runner_task]
+    current_batter_yearly_task >> current_batter_situation_task >> current_batter_daily_task
+    current_pitcher_yearly_task >> current_pitcher_situation_task >> current_pitcher_daily_task
+    current_fielder_task
+    current_runner_task
+
+

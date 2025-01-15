@@ -1,9 +1,15 @@
-from __init__ import *
+import sys
+import os
+current = os.path.dirname(os.path.realpath(__file__))
+parent = os.path.dirname(current)
+sys.path.append(parent)
 
+from __init__ import *
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
+from selenium.common.exceptions import NoSuchElementException
 import datetime
 import time
 from multiprocessing import Process
@@ -51,14 +57,19 @@ def get_n_save_whole_year_pitcher_data() -> set:
         time.sleep(CONST_SLEEP_TIME)        
 
     def get_max_page() -> int:
-        last_page_button = driver.find_element(by=By.ID, value='cphContents_cphContents_cphContents_ucPager_btnLast')
-        last_page_button.send_keys(Keys.RETURN)
-        time.sleep(CONST_SLEEP_TIME)
-        paging_div = driver.find_element(by=By.CLASS_NAME, value="paging")
-        paging_buttons = paging_div.find_elements(by=By.XPATH, value="./child::a")
-        max_page = paging_buttons[-2].text
-        paging_buttons[0].send_keys(Keys.RETURN)
-        time.sleep(CONST_SLEEP_TIME)
+        try:
+            last_page_button = driver.find_element(by=By.ID, value='cphContents_cphContents_cphContents_ucPager_btnLast')
+            last_page_button.send_keys(Keys.RETURN)
+            time.sleep(CONST_SLEEP_TIME)
+            paging_div = driver.find_element(by=By.CLASS_NAME, value="paging")
+            paging_buttons = paging_div.find_elements(by=By.XPATH, value="./child::a")
+            max_page = paging_buttons[-2].text
+            paging_buttons[0].send_keys(Keys.RETURN)
+            time.sleep(CONST_SLEEP_TIME)
+
+        except NoSuchElementException:
+            # len(page) == 1
+            return 1
 
         return int(max_page)
 
@@ -75,7 +86,7 @@ def get_n_save_whole_year_pitcher_data() -> set:
     year_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlSeason$ddlSeason'))
     for year_idx in range(len(year_selector.options)-1,-1,-1):
         year_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlSeason$ddlSeason'))
-        year_selector.select_by_index(year_idx) # 2024년부터 내려와
+        year_selector.select_by_index(year_idx) # 최신부터 내려오기
         time.sleep(CONST_SLEEP_TIME)
         year_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlSeason$ddlSeason'))
         selected_year = [ option for option in year_selector.options if option.get_attribute("selected")]
@@ -204,6 +215,7 @@ def get_n_save_whole_year_pitcher_data() -> set:
                 )
 
         df = pd.DataFrame({
+            "is_legacy" : ["N"] * len(basic_2_data),
             "year" : list(map(lambda x : x[0], basic_2_data)),
             "name" : list(map(lambda x : x[1], basic_2_data)),
             "id" : list(map(lambda x : x[2], basic_2_data)),
@@ -274,6 +286,8 @@ def get_n_save_whole_year_pitcher_data() -> set:
         else:
             pitcher_file_path = os.path.join(PITCHER_DATASET_DIR,f"Pitcher_{year}.parquet")
             df.to_parquet(pitcher_file_path, engine="pyarrow",index=False)
+        
+        if max_page != 1 : move_to_page(-1)
 
 
     return pitcher_number_list
