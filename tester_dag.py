@@ -14,7 +14,7 @@ with DAG(
     description = "test whatever we want",
 ) as dag:
     testTask = BashOperator(
-        task_id = "ls test",
+        task_id = "ls_test",
         bash_command="ls"
     )
 
