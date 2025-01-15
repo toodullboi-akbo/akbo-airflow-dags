@@ -14,8 +14,8 @@ with DAG(
     description = "test whatever we want",
 ) as dag:
     testTask = BashOperator(
-        task_id = "python_run_test",
-        bash_command="python -m src.entire_batter_yearly"
+        task_id = "pwd_test",
+        bash_command="pwd"
     )
 
 
