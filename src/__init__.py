@@ -87,7 +87,7 @@ MIN_YEAR = LEGACY_YEAR # MIN_YEAR + 1 까지 저장함
 
 CONST_SLEEP_TIME = 3
 ###############
-NUM_PROCESS = 3
+NUM_PROCESS = 2
 SLEEP_TIME_BEFORE_RETRY = 5
 MAX_RETRIES = 3
 ###############
