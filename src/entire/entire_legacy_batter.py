@@ -194,7 +194,7 @@ def get_n_save_legacy_batter_data() -> set:
         df['E'] = df['E'].astype(int)
 
         if IS_BLOB:
-            blob_name_path = os.path.join(DATASET_NAME,BATTER_DATASET_NAME,f"Batter_{year}.parquet")
+            blob_name_path = os.path.join(DATASET_NAME,BATTER_DATASET_NAME,LEGACY_DATASET_NAME,f"Batter_{year}.parquet")
             parquet_data = df.to_parquet(engine="pyarrow", index=False)
             wasb_hook.load_string(
                 string_data=parquet_data,
@@ -203,7 +203,7 @@ def get_n_save_legacy_batter_data() -> set:
                 overwrite=True
             )
         else:
-            batter_file_path = os.path.join(BATTER_DATASET_DIR,f"Batter_{year}.parquet")
+            batter_file_path = os.path.join(BATTER_LEGACY_DATASET_DIR,f"Batter_{year}.parquet")
             df.to_parquet(batter_file_path, engine="pyarrow",index=False)
         
         if max_page != 1: move_to_page(-1)

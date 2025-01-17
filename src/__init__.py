@@ -44,6 +44,8 @@ BATTER_DATASET_NAME = "batter_datasets"
 PITCHER_DATASET_NAME = "pitcher_datasets"
 FIELDER_DATASET_NAME = "fielding_datasets"
 RUNNER_DATASET_NAME = "runner_datasets"
+LEGACY_DATASET_NAME = "legacy"
+
 if not IS_BLOB:
     DATASET_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), DATASET_NAME)
     if not os.path.exists(DATASET_DIR):
@@ -60,6 +62,12 @@ if not IS_BLOB:
     RUNNER_DATASET_DIR = os.path.join(DATASET_DIR, RUNNER_DATASET_NAME)
     if not os.path.exists(RUNNER_DATASET_DIR):
         os.mkdir(RUNNER_DATASET_DIR)
+    BATTER_LEGACY_DATASET_DIR = os.path.join(BATTER_DATASET_DIR, LEGACY_DATASET_NAME)
+    if not os.path.exists(BATTER_LEGACY_DATASET_DIR):
+        os.mkdir(BATTER_LEGACY_DATASET_DIR)
+    PITCHER_LEGACY_DATASET_DIR = os.path.join(PITCHER_DATASET_DIR, LEGACY_DATASET_NAME)
+    if not os.path.exists(PITCHER_LEGACY_DATASET_DIR):
+        os.mkdir(PITCHER_LEGACY_DATASET_DIR)
 ###############
 if IS_BLOB:
     ENTIRE_BATTER_NUMBER_NAME_PATH = os.path.join(DATASET_NAME,"Entire_Batter_Number.csv")
