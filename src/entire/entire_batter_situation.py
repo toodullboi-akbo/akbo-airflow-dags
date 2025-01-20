@@ -25,21 +25,21 @@ def batter_situation_work(shared_number_list, index : int, attempt : int):
     try:
         while(len(shared_number_list) >= 1):
             batter_ID = shared_number_list[0]
-            print(f"Process-{index} processing: {batter_ID}")
+            # print(f"Process-{index} processing: {batter_ID}")
             get_n_save_batter_situation_data(batter_ID)
             shared_number_list.pop(0)
         exit(0)
     except Exception as e:
         if attempt < MAX_RETRIES:
             DYNAMIC_SLEEP_TIME = DYNAMIC_SLEEP_TIME * 2
-            print(f"ERROR while Process-{index} doing {shared_number_list[0]}")
-            for item in traceback.format_exception(e):
-                print(item)
-            print("let's retry")
+            # print(f"ERROR while Process-{index} doing {shared_number_list[0]}")
+            # for item in traceback.format_exception(e):
+                # print(item)
+            # print("let's retry")
             time.sleep(SLEEP_TIME_BEFORE_RETRY)
             batter_situation_work(shared_number_list, index, attempt=attempt+1)
         else:
-            print("exceed retry limit")
+            # print("exceed retry limit")
             exit(1)
 
 
