@@ -25,21 +25,21 @@ def batter_situation_work(shared_number_list, index : int, attempt : int):
     try:
         while(len(shared_number_list) >= 1):
             batter_ID = shared_number_list[0]
-            # print(f"Process-{index} processing: {batter_ID}")
+            print(f"Process-{index} processing: {batter_ID}")
             get_n_save_batter_situation_data(batter_ID)
             shared_number_list.pop(0)
         exit(0)
     except Exception as e:
         if attempt < MAX_RETRIES:
             DYNAMIC_SLEEP_TIME = DYNAMIC_SLEEP_TIME * 2
-            # print(f"ERROR while Process-{index} doing {shared_number_list[0]}")
-            # for item in traceback.format_exception(e):
-                # print(item)
-            # print("let's retry")
+            print(f"ERROR while Process-{index} doing {shared_number_list[0]}")
+            for item in traceback.format_exception(e):
+                print(item)
+            print("let's retry")
             time.sleep(SLEEP_TIME_BEFORE_RETRY)
             batter_situation_work(shared_number_list, index, attempt=attempt+1)
         else:
-            # print("exceed retry limit")
+            print("exceed retry limit")
             exit(1)
 
 
@@ -129,13 +129,16 @@ def get_n_save_batter_situation_data(batterID : int):
     if IS_BLOB:
         blob_name_path = os.path.join(DATASET_NAME,BATTER_DATASET_NAME,"batter_situation",f"{batterID}_Situation.parquet")
         parquet_data = df.to_parquet(engine="pyarrow", index=False)
+        blob_client = blob_service_client.get_blob_client(container=container_name, blob=blob_name_path)
+        blob_client.upload_blob(parquet_data, overwrite=True)
 
-        wasb_hook.load_string(
-            string_data=parquet_data,
-            container_name=container_name,
-            blob_name=blob_name_path,
-            overwrite=True
-        )
+
+        # wasb_hook.load_string(
+        #     string_data=parquet_data,
+        #     container_name=container_name,
+        #     blob_name=blob_name_path,
+        #     overwrite=True
+        # )
 
     else:
         situation_dir_path = os.path.join(BATTER_DATASET_DIR, "batter_situation")
@@ -155,12 +158,20 @@ if __name__ == "__main__" :
         st_time = time.time()
 
         if IS_BLOB:
-            csv_data = wasb_hook.read_file(
-                container_name=container_name,
-                blob_name=ENTIRE_BATTER_NUMBER_NAME_PATH
-            )
+            blob_client = blob_service_client.get_blob_client(container=container_name, blob=ENTIRE_BATTER_NUMBER_NAME_PATH)
+            # Download the blob content
+            blob_data = blob_client.download_blob()
+            csv_data = blob_data.readall().decode("utf-8")  # Decode the byte stream to string
+
+            # Convert the CSV content into a DataFrame
             csv_file = StringIO(csv_data)
             df = pd.read_csv(csv_file)
+            # csv_data = wasb_hook.read_file(
+            #     container_name=container_name,
+            #     blob_name=ENTIRE_BATTER_NUMBER_NAME_PATH
+            # )
+            # csv_file = StringIO(csv_data)
+            # df = pd.read_csv(csv_file)
         else:
             df = pd.read_csv(ENTIRE_BATTER_NUMBER_PATH,encoding="utf-8")
         batter_number_list = df["Numbers"].to_list()
