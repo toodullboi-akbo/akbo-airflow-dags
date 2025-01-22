@@ -178,30 +178,33 @@ if __name__ == "__main__" :
 
         print(f"number of distinct batter ::: {len(batter_number_list)}")
 
-        manager = Manager()
-        shared_number_list = [] # number_list 쪼개서 보관 예정
+        for batterID in batter_number_list:
+            get_n_save_batter_situation_data(batterID)
 
-        split_index = len(batter_number_list)//NUM_PROCESS
-        process_list = []
+        # manager = Manager()
+        # shared_number_list = [] # number_list 쪼개서 보관 예정
 
-        for i in range(0, NUM_PROCESS):
-            if i == NUM_PROCESS-1 : 
-                shared_number_list.append(manager.list(batter_number_list[split_index*i:]))
-            else : 
-                shared_number_list.append(manager.list(batter_number_list[split_index*i:split_index*(i+1)]))
+        # split_index = len(batter_number_list)//NUM_PROCESS
+        # process_list = []
+
+        # for i in range(0, NUM_PROCESS):
+        #     if i == NUM_PROCESS-1 : 
+        #         shared_number_list.append(manager.list(batter_number_list[split_index*i:]))
+        #     else : 
+        #         shared_number_list.append(manager.list(batter_number_list[split_index*i:split_index*(i+1)]))
         
 
-        for i in range(0, NUM_PROCESS):
-            if i == NUM_PROCESS-1 : 
-                process_list.append(Process(target=batter_situation_work, args=(shared_number_list[i],i,1)))
-            else : 
-                process_list.append(Process(target=batter_situation_work, args=(shared_number_list[i],i,1)))
+        # for i in range(0, NUM_PROCESS):
+        #     if i == NUM_PROCESS-1 : 
+        #         process_list.append(Process(target=batter_situation_work, args=(shared_number_list[i],i,1)))
+        #     else : 
+        #         process_list.append(Process(target=batter_situation_work, args=(shared_number_list[i],i,1)))
 
-        for process in process_list:
-            process.start()
+        # for process in process_list:
+        #     process.start()
         
-        for process in process_list:
-            process.join()
+        # for process in process_list:
+        #     process.join()
 
         end_time = time.time()
 
