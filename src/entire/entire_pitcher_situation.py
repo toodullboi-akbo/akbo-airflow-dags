@@ -55,6 +55,7 @@ def get_n_save_pitcher_situation_data(pitcherID : int):
         cat_selector.select_by_index(0) # 0 -> 정규시즌
         driver.implicitly_wait(DYNAMIC_SLEEP_TIME)
 
+    print(f"processing ... {pitcherID}")
     result = []
 
     # driver.get(f'https://www.koreabaseball.com/Record/Player/PitcherDetail/Situation.aspx?playerId={pitcherID}')
@@ -168,29 +169,32 @@ if __name__ == "__main__":
 
         print(f"number of distinct pitcher ::: {len(pitcher_number_list)}")
         
-        manager = Manager()
-        shared_number_list = [] # number_list 쪼개서 보관 예정
+        for pitcherID in pitcher_number_list:
+            get_n_save_pitcher_situation_data(pitcherID)
 
-        split_index = len(pitcher_number_list)//NUM_PROCESS
-        process_list = []
+        # manager = Manager()
+        # shared_number_list = [] # number_list 쪼개서 보관 예정
 
-        for i in range(0, NUM_PROCESS):
-            if i == NUM_PROCESS-1 : 
-                shared_number_list.append(manager.list(pitcher_number_list[split_index*i:]))
-            else : 
-                shared_number_list.append(manager.list(pitcher_number_list[split_index*i:split_index*(i+1)]))
+        # split_index = len(pitcher_number_list)//NUM_PROCESS
+        # process_list = []
+
+        # for i in range(0, NUM_PROCESS):
+        #     if i == NUM_PROCESS-1 : 
+        #         shared_number_list.append(manager.list(pitcher_number_list[split_index*i:]))
+        #     else : 
+        #         shared_number_list.append(manager.list(pitcher_number_list[split_index*i:split_index*(i+1)]))
         
-        for i in range(0, NUM_PROCESS):
-            if i == NUM_PROCESS-1 : 
-                process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1)))
-            else : 
-                process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1)))
+        # for i in range(0, NUM_PROCESS):
+        #     if i == NUM_PROCESS-1 : 
+        #         process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1)))
+        #     else : 
+        #         process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1)))
 
-        for process in process_list:
-            process.start()
+        # for process in process_list:
+        #     process.start()
         
-        for process in process_list:
-            process.join()
+        # for process in process_list:
+        #     process.join()
 
         end_time = time.time()
 
