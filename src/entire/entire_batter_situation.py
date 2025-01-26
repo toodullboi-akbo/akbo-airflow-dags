@@ -126,25 +126,25 @@ def get_n_save_batter_situation_data(batterID : int):
     df['SO'] = df['SO'].astype(int)
     df['GDP'] = df['GDP'].astype(int)
 
-    if IS_BLOB:
-        blob_name_path = os.path.join(DATASET_NAME,BATTER_DATASET_NAME,"batter_situation",f"{batterID}_Situation.parquet")
-        parquet_data = df.to_parquet(engine="pyarrow", index=False)
-        blob_client = blob_service_client.get_blob_client(container=container_name, blob=blob_name_path)
-        blob_client.upload_blob(parquet_data, overwrite=True)
+    # if IS_BLOB:
+    #     blob_name_path = os.path.join(DATASET_NAME,BATTER_DATASET_NAME,"batter_situation",f"{batterID}_Situation.parquet")
+    #     parquet_data = df.to_parquet(engine="pyarrow", index=False)
+    #     blob_client = blob_service_client.get_blob_client(container=container_name, blob=blob_name_path)
+    #     blob_client.upload_blob(parquet_data, overwrite=True)
 
 
-        # wasb_hook.load_string(
-        #     string_data=parquet_data,
-        #     container_name=container_name,
-        #     blob_name=blob_name_path,
-        #     overwrite=True
-        # )
+    #     # wasb_hook.load_string(
+    #     #     string_data=parquet_data,
+    #     #     container_name=container_name,
+    #     #     blob_name=blob_name_path,
+    #     #     overwrite=True
+    #     # )
 
-    else:
-        situation_dir_path = os.path.join(BATTER_DATASET_DIR, "batter_situation")
-        situation_file_path = os.path.join(situation_dir_path, f"{batterID}_Situation.parquet")
+    # else:
+    #     situation_dir_path = os.path.join(BATTER_DATASET_DIR, "batter_situation")
+    #     situation_file_path = os.path.join(situation_dir_path, f"{batterID}_Situation.parquet")
 
-        df.to_parquet(situation_file_path, engine="pyarrow", index=False)
+    #     df.to_parquet(situation_file_path, engine="pyarrow", index=False)
 
 
 
