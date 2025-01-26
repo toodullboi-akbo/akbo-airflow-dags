@@ -55,7 +55,6 @@ def get_n_save_pitcher_situation_data(pitcherID : int):
         cat_selector.select_by_index(0) # 0 -> 정규시즌
         driver.implicitly_wait(DYNAMIC_SLEEP_TIME)
 
-    print(f"processing ... {pitcherID}")
     result = []
 
     # driver.get(f'https://www.koreabaseball.com/Record/Player/PitcherDetail/Situation.aspx?playerId={pitcherID}')
@@ -129,21 +128,21 @@ def get_n_save_pitcher_situation_data(pitcherID : int):
     df['BK'] = df['BK'].astype(int)
     df['AVG'] = df['AVG'].astype(float)
 
-    if IS_BLOB:
-        blob_name_path = os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,"pitcher_situation",f"{pitcherID}_Situation.parquet")
-        parquet_data = df.to_parquet(engine="pyarrow", index=False)
+    # if IS_BLOB:
+    #     blob_name_path = os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,"pitcher_situation",f"{pitcherID}_Situation.parquet")
+    #     parquet_data = df.to_parquet(engine="pyarrow", index=False)
 
-        wasb_hook.load_string(
-            string_data=parquet_data,
-            container_name=container_name,
-            blob_name=blob_name_path,
-            overwrite=True
-        )
-    else:
-        situation_dir_path = os.path.join(PITCHER_DATASET_DIR, "pitcher_situation")
-        situation_file_path = os.path.join(situation_dir_path, f"{pitcherID}_Situation.parquet")
+    #     wasb_hook.load_string(
+    #         string_data=parquet_data,
+    #         container_name=container_name,
+    #         blob_name=blob_name_path,
+    #         overwrite=True
+    #     )
+    # else:
+    #     situation_dir_path = os.path.join(PITCHER_DATASET_DIR, "pitcher_situation")
+    #     situation_file_path = os.path.join(situation_dir_path, f"{pitcherID}_Situation.parquet")
 
-        df.to_parquet(situation_file_path, engine="pyarrow",index=False)
+    #     df.to_parquet(situation_file_path, engine="pyarrow",index=False)
 
 
 if __name__ == "__main__":
@@ -170,6 +169,7 @@ if __name__ == "__main__":
         print(f"number of distinct pitcher ::: {len(pitcher_number_list)}")
         
         for pitcherID in pitcher_number_list:
+            print(f"processing ... {pitcherID}")
             get_n_save_pitcher_situation_data(pitcherID)
 
         # manager = Manager()
