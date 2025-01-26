@@ -179,6 +179,7 @@ if __name__ == "__main__" :
         print(f"number of distinct batter ::: {len(batter_number_list)}")
 
         for batterID in batter_number_list:
+            print(f"now-processing ::: {batterID}")
             get_n_save_batter_situation_data(batterID)
 
         # manager = Manager()
