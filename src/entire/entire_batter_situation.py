@@ -126,25 +126,23 @@ def get_n_save_batter_situation_data(batterID : int):
     df['SO'] = df['SO'].astype(int)
     df['GDP'] = df['GDP'].astype(int)
 
-    # if IS_BLOB:
-    #     blob_name_path = os.path.join(DATASET_NAME,BATTER_DATASET_NAME,"batter_situation",f"{batterID}_Situation.parquet")
-    #     parquet_data = df.to_parquet(engine="pyarrow", index=False)
-    #     blob_client = blob_service_client.get_blob_client(container=container_name, blob=blob_name_path)
-    #     blob_client.upload_blob(parquet_data, overwrite=True)
+    if IS_BLOB:
+        blob_name_path = os.path.join(DATASET_NAME,BATTER_DATASET_NAME,"batter_situation",f"{batterID}_Situation.parquet")
+        parquet_data = df.to_parquet(engine="pyarrow", index=False)
+        # blob_client = blob_service_client.get_blob_client(container=container_name, blob=blob_name_path)
+        # blob_client.upload_blob(parquet_data, overwrite=True)
+        wasb_hook.load_string(
+            string_data=parquet_data,
+            container_name=container_name,
+            blob_name=blob_name_path,
+            overwrite=True
+        )
 
+    else:
+        situation_dir_path = os.path.join(BATTER_DATASET_DIR, "batter_situation")
+        situation_file_path = os.path.join(situation_dir_path, f"{batterID}_Situation.parquet")
 
-    #     # wasb_hook.load_string(
-    #     #     string_data=parquet_data,
-    #     #     container_name=container_name,
-    #     #     blob_name=blob_name_path,
-    #     #     overwrite=True
-    #     # )
-
-    # else:
-    #     situation_dir_path = os.path.join(BATTER_DATASET_DIR, "batter_situation")
-    #     situation_file_path = os.path.join(situation_dir_path, f"{batterID}_Situation.parquet")
-
-    #     df.to_parquet(situation_file_path, engine="pyarrow", index=False)
+        df.to_parquet(situation_file_path, engine="pyarrow", index=False)
 
 
 
@@ -158,54 +156,42 @@ if __name__ == "__main__" :
         st_time = time.time()
 
         if IS_BLOB:
-            blob_client = blob_service_client.get_blob_client(container=container_name, blob=ENTIRE_BATTER_NUMBER_NAME_PATH)
-            # Download the blob content
-            blob_data = blob_client.download_blob()
-            csv_data = blob_data.readall().decode("utf-8")  # Decode the byte stream to string
-
-            # Convert the CSV content into a DataFrame
+            csv_data = wasb_hook.read_file(
+                container_name=container_name,
+                blob_name=ENTIRE_BATTER_NUMBER_NAME_PATH
+            )
             csv_file = StringIO(csv_data)
             df = pd.read_csv(csv_file)
-            # csv_data = wasb_hook.read_file(
-            #     container_name=container_name,
-            #     blob_name=ENTIRE_BATTER_NUMBER_NAME_PATH
-            # )
-            # csv_file = StringIO(csv_data)
-            # df = pd.read_csv(csv_file)
         else:
             df = pd.read_csv(ENTIRE_BATTER_NUMBER_PATH,encoding="utf-8")
         batter_number_list = df["Numbers"].to_list()
 
         print(f"number of distinct batter ::: {len(batter_number_list)}")
 
-        for batterID in batter_number_list:
-            print(f"now-processing ::: {batterID}")
-            get_n_save_batter_situation_data(batterID)
+        manager = Manager()
+        shared_number_list = [] # number_list 쪼개서 보관 예정
 
-        # manager = Manager()
-        # shared_number_list = [] # number_list 쪼개서 보관 예정
+        split_index = len(batter_number_list)//NUM_PROCESS
+        process_list = []
 
-        # split_index = len(batter_number_list)//NUM_PROCESS
-        # process_list = []
-
-        # for i in range(0, NUM_PROCESS):
-        #     if i == NUM_PROCESS-1 : 
-        #         shared_number_list.append(manager.list(batter_number_list[split_index*i:]))
-        #     else : 
-        #         shared_number_list.append(manager.list(batter_number_list[split_index*i:split_index*(i+1)]))
+        for i in range(0, NUM_PROCESS):
+            if i == NUM_PROCESS-1 : 
+                shared_number_list.append(manager.list(batter_number_list[split_index*i:]))
+            else : 
+                shared_number_list.append(manager.list(batter_number_list[split_index*i:split_index*(i+1)]))
         
 
-        # for i in range(0, NUM_PROCESS):
-        #     if i == NUM_PROCESS-1 : 
-        #         process_list.append(Process(target=batter_situation_work, args=(shared_number_list[i],i,1)))
-        #     else : 
-        #         process_list.append(Process(target=batter_situation_work, args=(shared_number_list[i],i,1)))
+        for i in range(0, NUM_PROCESS):
+            if i == NUM_PROCESS-1 : 
+                process_list.append(Process(target=batter_situation_work, args=(shared_number_list[i],i,1)))
+            else : 
+                process_list.append(Process(target=batter_situation_work, args=(shared_number_list[i],i,1)))
 
-        # for process in process_list:
-        #     process.start()
+        for process in process_list:
+            process.start()
         
-        # for process in process_list:
-        #     process.join()
+        for process in process_list:
+            process.join()
 
         end_time = time.time()
 

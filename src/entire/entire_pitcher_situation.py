@@ -128,21 +128,21 @@ def get_n_save_pitcher_situation_data(pitcherID : int):
     df['BK'] = df['BK'].astype(int)
     df['AVG'] = df['AVG'].astype(float)
 
-    # if IS_BLOB:
-    #     blob_name_path = os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,"pitcher_situation",f"{pitcherID}_Situation.parquet")
-    #     parquet_data = df.to_parquet(engine="pyarrow", index=False)
+    if IS_BLOB:
+        blob_name_path = os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,"pitcher_situation",f"{pitcherID}_Situation.parquet")
+        parquet_data = df.to_parquet(engine="pyarrow", index=False)
 
-    #     wasb_hook.load_string(
-    #         string_data=parquet_data,
-    #         container_name=container_name,
-    #         blob_name=blob_name_path,
-    #         overwrite=True
-    #     )
-    # else:
-    #     situation_dir_path = os.path.join(PITCHER_DATASET_DIR, "pitcher_situation")
-    #     situation_file_path = os.path.join(situation_dir_path, f"{pitcherID}_Situation.parquet")
+        wasb_hook.load_string(
+            string_data=parquet_data,
+            container_name=container_name,
+            blob_name=blob_name_path,
+            overwrite=True
+        )
+    else:
+        situation_dir_path = os.path.join(PITCHER_DATASET_DIR, "pitcher_situation")
+        situation_file_path = os.path.join(situation_dir_path, f"{pitcherID}_Situation.parquet")
 
-    #     df.to_parquet(situation_file_path, engine="pyarrow",index=False)
+        df.to_parquet(situation_file_path, engine="pyarrow",index=False)
 
 
 if __name__ == "__main__":
@@ -167,34 +167,30 @@ if __name__ == "__main__":
         pitcher_number_list = df["Numbers"].to_list()
 
         print(f"number of distinct pitcher ::: {len(pitcher_number_list)}")
+
+        manager = Manager()
+        shared_number_list = [] # number_list 쪼개서 보관 예정
+
+        split_index = len(pitcher_number_list)//NUM_PROCESS
+        process_list = []
+
+        for i in range(0, NUM_PROCESS):
+            if i == NUM_PROCESS-1 : 
+                shared_number_list.append(manager.list(pitcher_number_list[split_index*i:]))
+            else : 
+                shared_number_list.append(manager.list(pitcher_number_list[split_index*i:split_index*(i+1)]))
         
-        for pitcherID in pitcher_number_list:
-            print(f"processing ... {pitcherID}")
-            get_n_save_pitcher_situation_data(pitcherID)
+        for i in range(0, NUM_PROCESS):
+            if i == NUM_PROCESS-1 : 
+                process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1)))
+            else : 
+                process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1)))
 
-        # manager = Manager()
-        # shared_number_list = [] # number_list 쪼개서 보관 예정
-
-        # split_index = len(pitcher_number_list)//NUM_PROCESS
-        # process_list = []
-
-        # for i in range(0, NUM_PROCESS):
-        #     if i == NUM_PROCESS-1 : 
-        #         shared_number_list.append(manager.list(pitcher_number_list[split_index*i:]))
-        #     else : 
-        #         shared_number_list.append(manager.list(pitcher_number_list[split_index*i:split_index*(i+1)]))
+        for process in process_list:
+            process.start()
         
-        # for i in range(0, NUM_PROCESS):
-        #     if i == NUM_PROCESS-1 : 
-        #         process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1)))
-        #     else : 
-        #         process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1)))
-
-        # for process in process_list:
-        #     process.start()
-        
-        # for process in process_list:
-        #     process.join()
+        for process in process_list:
+            process.join()
 
         end_time = time.time()
 
