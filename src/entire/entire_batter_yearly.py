@@ -93,7 +93,9 @@ def get_n_save_whole_year_batter_data() -> set:
         selected_year = [ option for option in year_selector.options if option.get_attribute("selected")]
         year = selected_year[0].text
         if(year == MIN_YEAR) : break
- 
+
+        print(f"{year}")
+        
         move_to_basic_detail("basic")
         ########
         # BASIC

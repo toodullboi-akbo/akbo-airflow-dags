@@ -11,7 +11,7 @@ from azure.storage.blob import BlobServiceClient
 
 ##################################################################
 ###############
-IS_BLOB = True
+IS_BLOB = False
 ###############
 if IS_BLOB:
     from airflow.providers.microsoft.azure.hooks.wasb import WasbHook
