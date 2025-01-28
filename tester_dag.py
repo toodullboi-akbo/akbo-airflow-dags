@@ -14,9 +14,10 @@ with DAG(
     description = "test whatever we want",
 ) as dag:
     testTask = BashOperator(
-        task_id = "pwd_test",
-        bash_command="pwd"
+        task_id = "entire_batter_yearly",
+        bash_command="python /opt/airflow/dags/repo/src/entire/entire_batter_yearly.py"
     )
+
 
 
 
