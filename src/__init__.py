@@ -11,18 +11,18 @@ from azure.storage.blob import BlobServiceClient
 
 ##################################################################
 ###############
-IS_BLOB = False
+IS_BLOB = True
 ###############
-if IS_BLOB:
-    from airflow.providers.microsoft.azure.hooks.wasb import WasbHook
-    wasb_hook = WasbHook(wasb_conn_id="my_wasb_storage_account")
-    container_name = "airflow-outputs"
-    blob_service_client = BlobServiceClient.from_connection_string(os.getenv("AIRFLOW_BLOB_SAS_KEY"))
+# if IS_BLOB:
+#     from airflow.providers.microsoft.azure.hooks.wasb import WasbHook
+#     wasb_hook = WasbHook(wasb_conn_id="my_wasb_storage_account")
+#     container_name = "airflow-outputs"
+#     blob_service_client = BlobServiceClient.from_connection_string(os.getenv("AIRFLOW_BLOB_SAS_KEY"))
 
 ###############
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
-if not IS_BLOB:
+if IS_BLOB:
     command_executor_url = 'http://selenium-grid-selenium-hub.airflow.svc:4444'
     connection_timeout = 500
 
