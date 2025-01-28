@@ -94,7 +94,6 @@ def get_n_save_whole_year_batter_data() -> set:
         year = selected_year[0].text
         if(year == MIN_YEAR) : break
 
-        print(f"{year}")
         
         move_to_basic_detail("basic")
         ########
@@ -245,20 +244,19 @@ def get_n_save_whole_year_batter_data() -> set:
         df['PPA'] = df['PPA'].astype(float)
         df['XR'] = df['XR'].astype(float)
 
-        # if IS_BLOB:
-        #     blob_name_path = os.path.join(DATASET_NAME,BATTER_DATASET_NAME,f"Batter_{year}.parquet")
-        #     parquet_data = df.to_parquet(engine="pyarrow", index=False)
-        #     wasb_hook.load_string(
-        #         string_data=parquet_data,
-        #         container_name=container_name,
-        #         blob_name=blob_name_path,
-        #         overwrite=True
-        #     )
-        # else:
-        #     batter_file_path = os.path.join(BATTER_DATASET_DIR,f"Batter_{year}.parquet")
-        #     df.to_parquet(batter_file_path, engine="pyarrow",index=False)
+        if IS_BLOB:
+            blob_name_path = os.path.join(DATASET_NAME,BATTER_DATASET_NAME,f"Batter_{year}.parquet")
+            parquet_data = df.to_parquet(engine="pyarrow", index=False)
+            wasb_hook.load_string(
+                string_data=parquet_data,
+                container_name=container_name,
+                blob_name=blob_name_path,
+                overwrite=True
+            )
+        else:
+            batter_file_path = os.path.join(BATTER_DATASET_DIR,f"Batter_{year}.parquet")
+            df.to_parquet(batter_file_path, engine="pyarrow",index=False)
 
-        print(len(df))
         if max_page != 1 : move_to_page(-1)
 
 
@@ -273,17 +271,17 @@ if __name__ == "__main__":
             "Numbers" : batter_number_list
         })
         
-        # if IS_BLOB:
-        #     blob_name_path = ENTIRE_BATTER_NUMBER_NAME_PATH
-        #     csv_data = df.to_csv(encoding='utf-8',mode='w',index=False)
-        #     wasb_hook.load_string(
-        #         string_data=csv_data,
-        #         container_name=container_name,
-        #         blob_name=blob_name_path,
-        #         overwrite=True
-        #     )
-        # else:
-        #     df.to_csv(ENTIRE_BATTER_NUMBER_PATH,encoding='utf-8',mode='w',index=False)
+        if IS_BLOB:
+            blob_name_path = ENTIRE_BATTER_NUMBER_NAME_PATH
+            csv_data = df.to_csv(encoding='utf-8',mode='w',index=False)
+            wasb_hook.load_string(
+                string_data=csv_data,
+                container_name=container_name,
+                blob_name=blob_name_path,
+                overwrite=True
+            )
+        else:
+            df.to_csv(ENTIRE_BATTER_NUMBER_PATH,encoding='utf-8',mode='w',index=False)
 
         end_time = time.time()
         print(f"{end_time-st_time} s")

@@ -7,17 +7,17 @@ import pandas as pd
 from io import StringIO
 import requests
 from datetime import datetime
-from azure.storage.blob import BlobServiceClient
 
 ##################################################################
 ###############
 IS_BLOB = True
 ###############
-# if IS_BLOB:
-#     from airflow.providers.microsoft.azure.hooks.wasb import WasbHook
-#     wasb_hook = WasbHook(wasb_conn_id="my_wasb_storage_account")
-#     container_name = "airflow-outputs"
-#     blob_service_client = BlobServiceClient.from_connection_string(os.getenv("AIRFLOW_BLOB_SAS_KEY"))
+if IS_BLOB:
+    from airflow.providers.microsoft.azure.hooks.wasb import WasbHook
+    wasb_hook = WasbHook(wasb_conn_id="my_wasb_storage_account")
+    # from azure.storage.blob import BlobServiceClient
+    container_name = "airflow-outputs"
+    # blob_service_client = BlobServiceClient.from_connection_string(os.getenv("AIRFLOW_BLOB_SAS_KEY"))
 
 ###############
 options = webdriver.ChromeOptions()
