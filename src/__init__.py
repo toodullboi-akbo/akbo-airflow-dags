@@ -84,7 +84,7 @@ else:
     CURRENT_PITCHER_NUMBER_NAME_PATH = os.path.join(DATASET_DIR,"Current_Pitcher_Number.csv")
 
 ###############
-CURRENT_YEAR = str(datetime.now().year)
+CURRENT_YEAR =  "2024" # str(datetime.now().year)
 LEGACY_YEAR = "2001" # LEGACY start year ( from beginnig to 2001 )
 MIN_YEAR = LEGACY_YEAR # MIN_YEAR + 1 까지 저장함
 
