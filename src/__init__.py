@@ -22,7 +22,7 @@ if IS_BLOB:
 ###############
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
-if IS_BLOB:
+if not IS_BLOB:
     command_executor_url = 'http://selenium-grid-selenium-hub.airflow.svc:4444'
     connection_timeout = 500
 
