@@ -10,7 +10,7 @@ from datetime import datetime
 
 ##################################################################
 ###############
-IS_BLOB = True
+IS_BLOB = False
 ###############
 if IS_BLOB:
     from airflow.providers.microsoft.azure.hooks.wasb import WasbHook
@@ -90,7 +90,7 @@ MIN_YEAR = LEGACY_YEAR # MIN_YEAR + 1 까지 저장함
 
 CONST_SLEEP_TIME = 3
 ###############
-NUM_PROCESS = 1
+NUM_PROCESS = 3
 SLEEP_TIME_BEFORE_RETRY = 5
 MAX_RETRIES = 3
 ###############
