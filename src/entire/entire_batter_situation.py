@@ -16,7 +16,7 @@ from multiprocessing import Process, Manager
 DYNAMIC_SLEEP_TIME = CONST_SLEEP_TIME
 #####
 
-def batter_situation_work(shared_number_list, index : int, attempt : int):
+def batter_situation_work(shared_number_list, index : int, attempt : int, driver):
     '''
     multiprocessing 돌리는 함수
     '''
@@ -26,7 +26,7 @@ def batter_situation_work(shared_number_list, index : int, attempt : int):
         while(len(shared_number_list) >= 1):
             batter_ID = shared_number_list[0]
             print(f"Process-{index} processing: {batter_ID}")
-            get_n_save_batter_situation_data(batter_ID)
+            get_n_save_batter_situation_data(batter_ID,driver)
             shared_number_list.pop(0)
         exit(0)
     except Exception as e:
@@ -37,13 +37,13 @@ def batter_situation_work(shared_number_list, index : int, attempt : int):
                 print(item)
             print("let's retry")
             time.sleep(SLEEP_TIME_BEFORE_RETRY)
-            batter_situation_work(shared_number_list, index, attempt=attempt+1)
+            batter_situation_work(shared_number_list, index, attempt=attempt+1,driver=driver)
         else:
             print("exceed retry limit")
             exit(1)
 
 
-def get_n_save_batter_situation_data(batterID : int):
+def get_n_save_batter_situation_data(batterID : int, driver):
     '''
     현재부터 MIN_YEAR +1 까지 상황별 기록 가져오기
     '''
@@ -147,7 +147,21 @@ def get_n_save_batter_situation_data(batterID : int):
 
 
 if __name__ == "__main__" :
+    drivers = [driver]
     try:
+        if NUM_PROCESS > 1:
+            if IS_BLOB:
+                for i in range(NUM_PROCESS-1):
+                    d = webdriver.Remote(
+                        command_executor=command_executor_url,
+                        options=options
+                    )
+                    drivers.append(d)
+            else:
+                for i in range(NUM_PROCESS-1):
+                    d = webdriver.Chrome(options=options)
+                    drivers.append(d)
+
         if not IS_BLOB:
             situation_dir_path = os.path.join(BATTER_DATASET_DIR, "batter_situation")
             if not os.path.exists(situation_dir_path):
@@ -183,9 +197,9 @@ if __name__ == "__main__" :
 
         for i in range(0, NUM_PROCESS):
             if i == NUM_PROCESS-1 : 
-                process_list.append(Process(target=batter_situation_work, args=(shared_number_list[i],i,1)))
+                process_list.append(Process(target=batter_situation_work, args=(shared_number_list[i],i,1,drivers[i])))
             else : 
-                process_list.append(Process(target=batter_situation_work, args=(shared_number_list[i],i,1)))
+                process_list.append(Process(target=batter_situation_work, args=(shared_number_list[i],i,1,drivers[i])))
 
         for process in process_list:
             process.start()
@@ -197,4 +211,5 @@ if __name__ == "__main__" :
 
         print(f"{end_time-st_time} s")
     finally:
-        driver.quit()
+        for d in drivers:
+            d.quit()
