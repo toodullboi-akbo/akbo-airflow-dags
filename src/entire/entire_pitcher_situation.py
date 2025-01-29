@@ -197,9 +197,9 @@ if __name__ == "__main__":
         
         for i in range(0, NUM_PROCESS):
             if i == NUM_PROCESS-1 : 
-                process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1,d[i])))
+                process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1,drivers[i])))
             else : 
-                process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1,d[i])))
+                process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1,drivers[i])))
 
         for process in process_list:
             process.start()
