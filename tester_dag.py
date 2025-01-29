@@ -14,8 +14,8 @@ with DAG(
     description = "test whatever we want",
 ) as dag:
     testTask = BashOperator(
-        task_id = "entire_batter_yearly",
-        bash_command="python /opt/airflow/dags/repo/src/entire/entire_batter_yearly.py"
+        task_id = "entire_pitcher_situation",
+        bash_command="python /opt/airflow/dags/repo/src/entire/entire_pitcher_situation.py"
     )
 
 
