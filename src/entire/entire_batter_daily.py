@@ -43,7 +43,7 @@ def batter_daily_work(shared_number_list, index : int, attempt : int, driver):
             exit(1)
 
 
-def get_n_save_batter_daily_data(batterID : int):
+def get_n_save_batter_daily_data(batterID : int, driver):
     '''
     현재부터 MIN_YEAR+1 까지 일자별 기록 가져오기
     '''
