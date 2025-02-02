@@ -48,6 +48,7 @@ PITCHER_DATASET_NAME = "pitcher_datasets"
 FIELDER_DATASET_NAME = "fielding_datasets"
 RUNNER_DATASET_NAME = "runner_datasets"
 LEGACY_DATASET_NAME = "legacy"
+YEARLY_DATASET_NAME = "yearly"
 
 if not IS_BLOB:
     DATASET_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), DATASET_NAME)
@@ -65,12 +66,19 @@ if not IS_BLOB:
     RUNNER_DATASET_DIR = os.path.join(DATASET_DIR, RUNNER_DATASET_NAME)
     if not os.path.exists(RUNNER_DATASET_DIR):
         os.mkdir(RUNNER_DATASET_DIR)
+    BATTER_YEARLY_DATASET_DIR = os.path.join(BATTER_DATASET_DIR, YEARLY_DATASET_NAME)
+    if not os.path.exists(BATTER_YEARLY_DATASET_DIR):
+        os.mkdir(BATTER_YEARLY_DATASET_DIR)
     BATTER_LEGACY_DATASET_DIR = os.path.join(BATTER_DATASET_DIR, LEGACY_DATASET_NAME)
     if not os.path.exists(BATTER_LEGACY_DATASET_DIR):
         os.mkdir(BATTER_LEGACY_DATASET_DIR)
+    PITCHER_YEARLY_DATASET_DIR = os.path.join(PITCHER_DATASET_DIR, YEARLY_DATASET_NAME)
+    if not os.path.exists(PITCHER_YEARLY_DATASET_DIR):
+        os.mkdir(PITCHER_YEARLY_DATASET_DIR)
     PITCHER_LEGACY_DATASET_DIR = os.path.join(PITCHER_DATASET_DIR, LEGACY_DATASET_NAME)
     if not os.path.exists(PITCHER_LEGACY_DATASET_DIR):
         os.mkdir(PITCHER_LEGACY_DATASET_DIR)
+    
 ###############
 if IS_BLOB:
     ENTIRE_BATTER_NUMBER_NAME_PATH = os.path.join(DATASET_NAME,"Entire_Batter_Number.csv")
@@ -94,3 +102,20 @@ NUM_PROCESS = 3
 SLEEP_TIME_BEFORE_RETRY = 5
 MAX_RETRIES = 3
 ###############
+
+### Functions ###
+def save_df(df, blob_name_path,local_file_path):
+    if IS_BLOB:
+        parquet_data = df.to_parquet(engine="pyarrow", index=False)
+        wasb_hook.load_string(
+            string_data=parquet_data,
+            container_name=container_name,
+            blob_name=blob_name_path,
+            overwrite=True
+        )
+    else:
+        df.to_parquet(local_file_path, engine="pyarrow",index=False)
+
+
+
+#################

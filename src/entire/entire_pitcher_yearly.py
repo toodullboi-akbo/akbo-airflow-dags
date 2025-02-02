@@ -125,7 +125,6 @@ def get_n_save_whole_year_pitcher_data() -> set:
             # len(td_data_element) == 18
 
             for i in range(0,len(td_data),18):
-                # 여기서 이름과 번호도 기록
                 name_a = td_data[i+1].find_element(by=By.XPATH, value="./child::a")
                 name = name_a.text
                 number = name_a.get_attribute('href').split('=')[-1]
@@ -166,7 +165,49 @@ def get_n_save_whole_year_pitcher_data() -> set:
 
                 pitcher_number_list.add(number)
 
+        df = pd.DataFrame({
+            "is_legacy" : ["N"] * len(basic_2_data),
+            "year" : list(map(lambda x : x[0], basic_2_data)),
+            "name" : list(map(lambda x : x[1], basic_2_data)),
+            "id" : list(map(lambda x : x[2], basic_2_data)),
+            "team" : list(map(lambda x : x[3], basic_2_data)),
+            "CG" : list(map(lambda x : x[4], basic_2_data)),
+            "SHO" : list(map(lambda x : x[5], basic_2_data)),
+            "QS" : list(map(lambda x : x[6], basic_2_data)),
+            "BSV" : list(map(lambda x : x[7], basic_2_data)),
+            "TBF" : list(map(lambda x : x[8], basic_2_data)),
+            "NP" : list(map(lambda x : x[9], basic_2_data)),
+            "2B" : list(map(lambda x : x[10], basic_2_data)),
+            "3B" : list(map(lambda x : x[11], basic_2_data)),
+            "SAC" : list(map(lambda x : x[12], basic_2_data)),
+            "SF" : list(map(lambda x : x[13], basic_2_data)),
+            "IBB" : list(map(lambda x : x[14], basic_2_data)),
+            "WP" : list(map(lambda x : x[15], basic_2_data)),
+            "BK" : list(map(lambda x : x[16], basic_2_data))
+        })
 
+        df = df.replace("-",np.nan)
+        df['year'] = df['year'].astype(int)
+        df['id'] = df['id'].astype(int)
+        df['CG'] = df['CG'].astype(int)
+        df['SHO'] = df['SHO'].astype(int)
+        df['QS'] = df['QS'].astype(int)
+        df['BSV'] = df['BSV'].astype(int)
+        df['TBF'] = df['TBF'].astype(int)
+        df['NP'] = df['NP'].astype(int)
+        df['2B'] = df['2B'].astype(int)
+        df['3B'] = df['3B'].astype(int)
+        df['SAC'] = df['SAC'].astype(int)
+        df['SF'] = df['SF'].astype(int)
+        df['IBB'] = df['IBB'].astype(int)
+        df['WP'] = df['WP'].astype(int)
+        df['BK'] = df['BK'].astype(int)
+
+        save_df(
+            df,
+            os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,YEARLY_DATASET_NAME,f"Pitcher_basic_2_{year}.parquet"),
+            os.path.join(PITCHER_YEARLY_DATASET_DIR,f"Pitcher_basic_2_{year}.parquet")
+        )
 
         ########
         # DETAIL
@@ -191,6 +232,9 @@ def get_n_save_whole_year_pitcher_data() -> set:
             # len(td_data_element) == 14
 
             for i in range(0,len(td_data),14):
+                name_a = td_data[i+1].find_element(by=By.XPATH, value="./child::a")
+                name = name_a.text
+                number = name_a.get_attribute('href').split('=')[-1]
                 # 세부기록
                 stat_GS = td_data[i+4].text # 선발수
                 stat_Wgs = td_data[i+5].text # 선발승
@@ -203,6 +247,8 @@ def get_n_save_whole_year_pitcher_data() -> set:
                 stat_AO = td_data[i+12].text # 뜬공
 
                 detail_1_data.append(
+                    [year]+
+                    [number]+
                     [stat_GS]+
                     [stat_Wgs]+
                     [stat_Wgr]+
@@ -215,34 +261,17 @@ def get_n_save_whole_year_pitcher_data() -> set:
                 )
 
         df = pd.DataFrame({
-            "is_legacy" : ["N"] * len(basic_2_data),
-            "year" : list(map(lambda x : x[0], basic_2_data)),
-            "name" : list(map(lambda x : x[1], basic_2_data)),
-            "id" : list(map(lambda x : x[2], basic_2_data)),
-            "team" : list(map(lambda x : x[3], basic_2_data)),
-            "CG" : list(map(lambda x : x[4], basic_2_data)),
-            "SHO" : list(map(lambda x : x[5], basic_2_data)),
-            "QS" : list(map(lambda x : x[6], basic_2_data)),
-            "BSV" : list(map(lambda x : x[7], basic_2_data)),
-            "TBF" : list(map(lambda x : x[8], basic_2_data)),
-            "NP" : list(map(lambda x : x[9], basic_2_data)),
-            "2B" : list(map(lambda x : x[10], basic_2_data)),
-            "3B" : list(map(lambda x : x[11], basic_2_data)),
-            "SAC" : list(map(lambda x : x[12], basic_2_data)),
-            "SF" : list(map(lambda x : x[13], basic_2_data)),
-            "IBB" : list(map(lambda x : x[14], basic_2_data)),
-            "WP" : list(map(lambda x : x[15], basic_2_data)),
-            "BK" : list(map(lambda x : x[16], basic_2_data)),
-
-            "GS" : list(map(lambda x : x[0], detail_1_data)),
-            "Wgs" : list(map(lambda x : x[1], detail_1_data)),
-            "Wgr" : list(map(lambda x : x[2], detail_1_data)),
-            "GF" : list(map(lambda x : x[3], detail_1_data)),
-            "SVO" : list(map(lambda x : x[4], detail_1_data)),
-            "TS" : list(map(lambda x : x[5], detail_1_data)),
-            "GDP" : list(map(lambda x : x[6], detail_1_data)),
-            "GO" : list(map(lambda x : x[7], detail_1_data)),
-            "AO" : list(map(lambda x : x[8], detail_1_data)),
+            "year" : list(map(lambda x : x[0], detail_1_data)),
+            "id" : list(map(lambda x : x[1], detail_1_data)),
+            "GS" : list(map(lambda x : x[2], detail_1_data)),
+            "Wgs" : list(map(lambda x : x[3], detail_1_data)),
+            "Wgr" : list(map(lambda x : x[4], detail_1_data)),
+            "GF" : list(map(lambda x : x[5], detail_1_data)),
+            "SVO" : list(map(lambda x : x[6], detail_1_data)),
+            "TS" : list(map(lambda x : x[7], detail_1_data)),
+            "GDP" : list(map(lambda x : x[8], detail_1_data)),
+            "GO" : list(map(lambda x : x[9], detail_1_data)),
+            "AO" : list(map(lambda x : x[10], detail_1_data)),
         })
 
     
@@ -250,19 +279,6 @@ def get_n_save_whole_year_pitcher_data() -> set:
         df = df.replace("-",np.nan)
         df['year'] = df['year'].astype(int)
         df['id'] = df['id'].astype(int)
-        df['CG'] = df['CG'].astype(int)
-        df['SHO'] = df['SHO'].astype(int)
-        df['QS'] = df['QS'].astype(int)
-        df['BSV'] = df['BSV'].astype(int)
-        df['TBF'] = df['TBF'].astype(int)
-        df['NP'] = df['NP'].astype(int)
-        df['2B'] = df['2B'].astype(int)
-        df['3B'] = df['3B'].astype(int)
-        df['SAC'] = df['SAC'].astype(int)
-        df['SF'] = df['SF'].astype(int)
-        df['IBB'] = df['IBB'].astype(int)
-        df['WP'] = df['WP'].astype(int)
-        df['BK'] = df['BK'].astype(int)
         df['GS'] = df['GS'].astype(int)
         df['Wgs'] = df['Wgs'].astype(int)
         df['Wgr'] = df['Wgr'].astype(int)
@@ -273,19 +289,12 @@ def get_n_save_whole_year_pitcher_data() -> set:
         df['GO'] = df['GO'].astype(int)
         df['AO'] = df['AO'].astype(int)
 
+        save_df(
+            df,
+            os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,YEARLY_DATASET_NAME,f"Pitcher_detail_1_{year}.parquet"),
+            os.path.join(PITCHER_YEARLY_DATASET_DIR,f"Pitcher_detail_1_{year}.parquet")
+        )
 
-        if IS_BLOB:
-            blob_name_path = os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,f"Pitcher_{year}.parquet")
-            parquet_data = df.to_parquet(engine="pyarrow", index=False)
-            wasb_hook.load_string(
-                string_data=parquet_data,
-                container_name=container_name,
-                blob_name=blob_name_path,
-                overwrite=True
-            )
-        else:
-            pitcher_file_path = os.path.join(PITCHER_DATASET_DIR,f"Pitcher_{year}.parquet")
-            df.to_parquet(pitcher_file_path, engine="pyarrow",index=False)
         
         if max_page != 1 : move_to_page(-1)
 
@@ -303,17 +312,12 @@ if __name__ == "__main__":
             "Numbers" : pitcher_number_list
         })
 
-        if IS_BLOB:
-            blob_name_path = ENTIRE_PITCHER_NUMBER_NAME_PATH
-            csv_data = df.to_csv(encoding='utf-8',mode='w',index=False)
-            wasb_hook.load_string(
-                string_data=csv_data,
-                container_name=container_name,
-                blob_name=blob_name_path,
-                overwrite=True
-            )
-        else:
-            df.to_csv(ENTIRE_PITCHER_NUMBER_PATH,encoding='utf-8',mode='w',index=False)
+        save_df(
+            df,
+            ENTIRE_PITCHER_NUMBER_NAME_PATH,
+            ENTIRE_PITCHER_NUMBER_PATH
+        )
+
 
         end_time = time.time()
         print(f"{end_time-st_time} s")

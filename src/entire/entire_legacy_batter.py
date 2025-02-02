@@ -77,7 +77,11 @@ def get_n_save_legacy_batter_data() -> set:
         selected_year = [ option for option in year_selector.options if option.get_attribute("selected")]
         year = selected_year[0].text
         if(int(year) > int(LEGACY_YEAR)) : continue
- 
+        if(int(year) == int(LEGACY_YEAR)) :
+            sort_button = driver.find_element(by=By.XPATH, value='//*[@id="cphContents_cphContents_cphContents_udpContent"]/div[2]/table/thead/tr/th[5]/a')
+            sort_button.send_keys(Keys.RETURN)
+            time.sleep(CONST_SLEEP_TIME)            
+
         ########
         # BASIC
         ########
@@ -193,18 +197,11 @@ def get_n_save_legacy_batter_data() -> set:
         df['GDP'] = df['GDP'].astype(int)
         df['E'] = df['E'].astype(int)
 
-        if IS_BLOB:
-            blob_name_path = os.path.join(DATASET_NAME,BATTER_DATASET_NAME,LEGACY_DATASET_NAME,f"Batter_{year}.parquet")
-            parquet_data = df.to_parquet(engine="pyarrow", index=False)
-            wasb_hook.load_string(
-                string_data=parquet_data,
-                container_name=container_name,
-                blob_name=blob_name_path,
-                overwrite=True
-            )
-        else:
-            batter_file_path = os.path.join(BATTER_LEGACY_DATASET_DIR,f"Batter_{year}.parquet")
-            df.to_parquet(batter_file_path, engine="pyarrow",index=False)
+        save_df(
+            df,
+            os.path.join(DATASET_NAME,BATTER_DATASET_NAME,LEGACY_DATASET_NAME,f"Batter_{year}.parquet"),
+            os.path.join(BATTER_LEGACY_DATASET_DIR,f"Batter_{year}.parquet")
+        )
         
         if max_page != 1: move_to_page(-1)
 

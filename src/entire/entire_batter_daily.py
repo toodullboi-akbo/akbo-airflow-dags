@@ -143,22 +143,12 @@ def get_n_save_batter_daily_data(batterID : int, driver):
     df['GDP'] = df['GDP'].astype(int)
     df['seasonAVG'] = df['seasonAVG'].astype(float)
 
-    if IS_BLOB:
-        blob_name_path = os.path.join(DATASET_NAME,BATTER_DATASET_NAME,"batter_daily",f"{batterID}_Daily.parquet")
-        parquet_data = df.to_parquet(engine="pyarrow", index=False)
-
-        wasb_hook.load_string(
-            string_data=parquet_data,
-            container_name=container_name,
-            blob_name=blob_name_path,
-            overwrite=True
-        )
-
-    else:
-        daily_dir_path = os.path.join(BATTER_DATASET_DIR, "batter_daily")
-        daily_file_path = os.path.join(daily_dir_path, f"{batterID}_Daily.parquet")
-
-        df.to_parquet(daily_file_path, engine="pyarrow",index=False)
+    daily_dir_path = os.path.join(BATTER_DATASET_DIR, "batter_daily")
+    save_df(
+        df,
+        os.path.join(DATASET_NAME,BATTER_DATASET_NAME,"batter_daily",f"{batterID}_Daily.parquet"),
+        os.path.join(daily_dir_path, f"{batterID}_Daily.parquet")
+    )
 
 
 

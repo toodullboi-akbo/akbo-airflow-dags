@@ -128,21 +128,13 @@ def get_n_save_pitcher_situation_data(pitcherID : int, driver):
     df['BK'] = df['BK'].astype(int)
     df['AVG'] = df['AVG'].astype(float)
 
-    if IS_BLOB:
-        blob_name_path = os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,"pitcher_situation",f"{pitcherID}_Situation.parquet")
-        parquet_data = df.to_parquet(engine="pyarrow", index=False)
 
-        wasb_hook.load_string(
-            string_data=parquet_data,
-            container_name=container_name,
-            blob_name=blob_name_path,
-            overwrite=True
-        )
-    else:
-        situation_dir_path = os.path.join(PITCHER_DATASET_DIR, "pitcher_situation")
-        situation_file_path = os.path.join(situation_dir_path, f"{pitcherID}_Situation.parquet")
-
-        df.to_parquet(situation_file_path, engine="pyarrow",index=False)
+    situation_dir_path = os.path.join(PITCHER_DATASET_DIR, "pitcher_situation")
+    save_df(
+        df,
+        os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,"pitcher_situation",f"{pitcherID}_Situation.parquet"),
+        os.path.join(situation_dir_path, f"{pitcherID}_Situation.parquet")
+    )
 
 
 if __name__ == "__main__":

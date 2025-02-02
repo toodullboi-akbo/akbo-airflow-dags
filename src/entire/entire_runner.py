@@ -128,18 +128,12 @@ def get_n_save_whole_year_runner_data() -> set:
         df['OOB'] = df['OOB'].astype(int)
         df['PKO'] = df['PKO'].astype(int)
 
-        if IS_BLOB:
-            blob_name_path = os.path.join(DATASET_NAME,RUNNER_DATASET_NAME,f"Runner_{year}.parquet")
-            parquet_data = df.to_parquet(engine="pyarrow", index=False)
-            wasb_hook.load_string(
-                string_data=parquet_data,
-                container_name=container_name,
-                blob_name=blob_name_path,
-                overwrite=True
-            )
-        else:
-            runner_file_path = os.path.join(RUNNER_DATASET_DIR,f"Runner_{year}.parquet")
-            df.to_parquet(runner_file_path, engine="pyarrow",index=False)
+        save_df(
+            df,
+            os.path.join(DATASET_NAME,RUNNER_DATASET_NAME,f"Runner_{year}.parquet"),
+            os.path.join(RUNNER_DATASET_DIR,f"Runner_{year}.parquet")
+        )
+
         if max_page != 1 : move_to_page(-1)
 
 

@@ -138,22 +138,12 @@ def get_n_save_pitcher_daily_data(pitcherID : int, driver):
     df['ER'] = df['ER'].astype(int)
     df['seasonERA'] = df['seasonERA'].astype(float)
 
-    if IS_BLOB:
-        blob_name_path = os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,"pitcher_daily",f"{pitcherID}_Daily.parquet")
-        parquet_data = df.to_parquet(engine="pyarrow", index=False)
-
-        wasb_hook.load_string(
-            string_data=parquet_data,
-            container_name=container_name,
-            blob_name=blob_name_path,
-            overwrite=True
-        )
-
-    else:
-        daily_dir_path = os.path.join(PITCHER_DATASET_DIR, "pitcher_daily")
-        daily_file_path = os.path.join(daily_dir_path, f"{pitcherID}_Daily.parquet")
-
-        df.to_parquet(daily_file_path, engine="pyarrow",index=False)
+    daily_dir_path = os.path.join(PITCHER_DATASET_DIR, "pitcher_daily")
+    save_df(
+        df,
+        os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,"pitcher_daily",f"{pitcherID}_Daily.parquet"),
+        os.path.join(daily_dir_path, f"{pitcherID}_Daily.parquet")
+    )
 
 
 if __name__ == "__main__":
