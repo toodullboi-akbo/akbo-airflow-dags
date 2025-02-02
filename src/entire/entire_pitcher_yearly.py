@@ -205,8 +205,8 @@ def get_n_save_whole_year_pitcher_data() -> set:
 
         save_df(
             df,
-            os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,YEARLY_DATASET_NAME,f"Pitcher_basic_2_{year}.parquet"),
-            os.path.join(PITCHER_YEARLY_DATASET_DIR,f"Pitcher_basic_2_{year}.parquet")
+            os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,YEARLY_DATASET_NAME,"basic_2",f"Pitcher_basic_2_{year}.parquet"),
+            os.path.join(PITCHER_YEARLY_DATASET_DIR,"basic_2",f"Pitcher_basic_2_{year}.parquet")
         )
 
         ########
@@ -291,8 +291,8 @@ def get_n_save_whole_year_pitcher_data() -> set:
 
         save_df(
             df,
-            os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,YEARLY_DATASET_NAME,f"Pitcher_detail_1_{year}.parquet"),
-            os.path.join(PITCHER_YEARLY_DATASET_DIR,f"Pitcher_detail_1_{year}.parquet")
+            os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,YEARLY_DATASET_NAME,"detail_1",f"Pitcher_detail_1_{year}.parquet"),
+            os.path.join(PITCHER_YEARLY_DATASET_DIR,"detail_1",f"Pitcher_detail_1_{year}.parquet")
         )
 
         
@@ -304,9 +304,18 @@ def get_n_save_whole_year_pitcher_data() -> set:
 
 if __name__ == "__main__":
     try :
-        st_time = time.time()
+        # making directory if not existed
+        if not IS_BLOB:
+            basic_2_dir_path = os.path.join(PITCHER_YEARLY_DATASET_DIR, "basic_2")
+            detail_1_dir_path = os.path.join(PITCHER_YEARLY_DATASET_DIR, "detail_1")
+            if not os.path.exists(basic_2_dir_path):
+                os.mkdir(basic_2_dir_path)
+            if not os.path.exists(detail_1_dir_path):
+                os.mkdir(detail_1_dir_path)
 
+        st_time = time.time()
         pitcher_number_list = list(get_n_save_whole_year_pitcher_data())
+
 
         df = pd.DataFrame({
             "Numbers" : pitcher_number_list

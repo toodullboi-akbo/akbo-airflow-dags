@@ -154,8 +154,8 @@ def get_n_save_whole_year_batter_data() -> set:
 
         save_df(
             df,
-            os.path.join(DATASET_NAME,BATTER_DATASET_NAME,YEARLY_DATASET_NAME,f"Batter_basic_1_{year}.parquet"),
-            os.path.join(BATTER_YEARLY_DATASET_DIR,f"Batter_basic_1_{year}.parquet")
+            os.path.join(DATASET_NAME,BATTER_DATASET_NAME,YEARLY_DATASET_NAME,"basic_1",f"Batter_basic_1_{year}.parquet"),
+            os.path.join(BATTER_YEARLY_DATASET_DIR,"basic_1",f"Batter_basic_1_{year}.parquet")
         )
 
         # BASIC 2
@@ -219,8 +219,8 @@ def get_n_save_whole_year_batter_data() -> set:
 
         save_df(
             df,
-            os.path.join(DATASET_NAME,BATTER_DATASET_NAME,YEARLY_DATASET_NAME,f"Batter_basic_2_{year}.parquet"),
-            os.path.join(BATTER_YEARLY_DATASET_DIR,f"Batter_basic_2_{year}.parquet")
+            os.path.join(DATASET_NAME,BATTER_DATASET_NAME,YEARLY_DATASET_NAME,"basic_2",f"Batter_basic_2_{year}.parquet"),
+            os.path.join(BATTER_YEARLY_DATASET_DIR,"basic_2",f"Batter_basic_2_{year}.parquet")
         )
 
         ########
@@ -285,8 +285,8 @@ def get_n_save_whole_year_batter_data() -> set:
 
         save_df(
             df,
-            os.path.join(DATASET_NAME,BATTER_DATASET_NAME,YEARLY_DATASET_NAME,f"Batter_detail_{year}.parquet"),
-            os.path.join(BATTER_YEARLY_DATASET_DIR,f"Batter_detail_{year}.parquet")
+            os.path.join(DATASET_NAME,BATTER_DATASET_NAME,YEARLY_DATASET_NAME,"detail",f"Batter_detail_{year}.parquet"),
+            os.path.join(BATTER_YEARLY_DATASET_DIR,"detail",f"Batter_detail_{year}.parquet")
         )
 
 
@@ -297,8 +297,22 @@ def get_n_save_whole_year_batter_data() -> set:
 
 if __name__ == "__main__":
     try :
+        # making directory if not existed
+        if not IS_BLOB:
+            basic_1_dir_path = os.path.join(BATTER_YEARLY_DATASET_DIR, "basic_1")
+            basic_2_dir_path = os.path.join(BATTER_YEARLY_DATASET_DIR, "basic_2")
+            detail_dir_path = os.path.join(BATTER_YEARLY_DATASET_DIR, "detail")
+            if not os.path.exists(basic_1_dir_path):
+                os.mkdir(basic_1_dir_path)
+            if not os.path.exists(basic_2_dir_path):
+                os.mkdir(basic_2_dir_path)
+            if not os.path.exists(detail_dir_path):
+                os.mkdir(detail_dir_path)
+
         st_time = time.time()
         batter_number_list = list(get_n_save_whole_year_batter_data())
+
+
 
         df = pd.DataFrame({
             "Numbers" : batter_number_list
