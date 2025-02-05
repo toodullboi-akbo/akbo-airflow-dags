@@ -16,9 +16,9 @@ import time
 
 #################
 
-def get_n_save_current_year_runner_data() -> set:
+def get_n_save_whole_year_runner_data() -> set:
     '''
-    CURRENT YEAR의 주루 기록
+    현재부터 MIN_YEAR + 1 까지 전체 주루 기록 가져오기
 
     return set ::: 선수들의 고유번호가 담긴 set
     '''
@@ -60,14 +60,13 @@ def get_n_save_current_year_runner_data() -> set:
     driver.implicitly_wait(3)
 
     year_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlSeason$ddlSeason'))
-    year_selector.select_by_value(CURRENT_YEAR) 
+    year_selector.select_by_value(CURRENT_YEAR) # 최신부터 내려오기
     time.sleep(CONST_SLEEP_TIME)
     year_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlSeason$ddlSeason'))
     selected_year = [ option for option in year_selector.options if option.get_attribute("selected")]
     year = selected_year[0].text
 
     assert(year == CURRENT_YEAR)
-
     ########
     # BASIC
     ########
@@ -127,18 +126,12 @@ def get_n_save_current_year_runner_data() -> set:
     df['OOB'] = df['OOB'].astype(int)
     df['PKO'] = df['PKO'].astype(int)
 
-    if IS_BLOB:
-        blob_name_path = os.path.join(DATASET_NAME,RUNNER_DATASET_NAME,f"Runner_{year}.parquet")
-        parquet_data = df.to_parquet(engine="pyarrow", index=False)
-        wasb_hook.load_string(
-            string_data=parquet_data,
-            container_name=container_name,
-            blob_name=blob_name_path,
-            overwrite=True
-        )
-    else:
-        runner_file_path = os.path.join(RUNNER_DATASET_DIR,f"Runner_{year}.parquet")
-        df.to_parquet(runner_file_path, engine="pyarrow",index=False)
+    save_df(
+        df,
+        os.path.join(DATASET_NAME,RUNNER_DATASET_NAME,f"Runner_{year}.parquet"),
+        os.path.join(RUNNER_DATASET_DIR,f"Runner_{year}.parquet")
+    )
+
     if max_page != 1 : move_to_page(-1)
 
 
@@ -148,7 +141,7 @@ def get_n_save_current_year_runner_data() -> set:
 if __name__ == "__main__":
     try:
         st_time = time.time()
-        batter_number_list = list(get_n_save_current_year_runner_data())
+        batter_number_list = list(get_n_save_whole_year_runner_data())
         print(f"number of distinct runner ::: {len(batter_number_list)}")
         
         end_time = time.time()

@@ -17,16 +17,16 @@ from multiprocessing import Process, Manager
 DYNAMIC_SLEEP_TIME = CONST_SLEEP_TIME
 #####
 
-def batter_daily_work(shared_number_list, index : int, attempt : int):
+def batter_daily_work(shared_number_list, index : int, attempt : int, driver):
     '''
     multiprocessing 돌리는 함수
     '''
-    global DYNAMIC_SLEEP_TIME    
+    global DYNAMIC_SLEEP_TIME   
     try:
         while(len(shared_number_list) >= 1):
             batter_ID = shared_number_list[0]
             print(f"Process-{index} processing: {batter_ID}")
-            get_n_save_batter_daily_data(batter_ID)
+            get_n_save_batter_daily_data(batter_ID, driver)
             shared_number_list.pop(0)
         exit(0)
     except Exception as e:
@@ -37,14 +37,15 @@ def batter_daily_work(shared_number_list, index : int, attempt : int):
                 print(item)
             print("let's retry")
             time.sleep(SLEEP_TIME_BEFORE_RETRY)
-            batter_daily_work(shared_number_list, index, attempt=attempt+1)
+            batter_daily_work(shared_number_list, index, attempt=attempt+1, driver=driver)
         else:
             print("exceed retry limit")
             exit(1)
 
-def get_n_save_batter_daily_data(batterID : int):
+
+def get_n_save_batter_daily_data(batterID : int, driver):
     '''
-    CURRENT YEAR 일자별 기록 가져오기
+    현재부터 MIN_YEAR+1 까지 일자별 기록 가져오기
     '''
     def set_initial_page_setting() :
         driver.get(f'https://www.koreabaseball.com/Record/Player/HitterDetail/Daily.aspx?playerId={batterID}')
@@ -59,8 +60,8 @@ def get_n_save_batter_daily_data(batterID : int):
     # driver.implicitly_wait(3)
     set_initial_page_setting()
     
-    year_selector = Select(driver.find_element(by=By.NAME, value="ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlYear"))
 
+    year_selector = Select(driver.find_element(by=By.NAME, value="ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlYear"))
     year_selector.select_by_value(CURRENT_YEAR)
     driver.implicitly_wait(DYNAMIC_SLEEP_TIME)
 
@@ -68,7 +69,7 @@ def get_n_save_batter_daily_data(batterID : int):
     year = year_data.text.split(' ')[0][:-1]
     
     assert(year == CURRENT_YEAR)
-
+    
     td_data = driver.find_elements(by=By.TAG_NAME, value="td")
     format = '%Y.%m.%d'
     
@@ -140,27 +141,31 @@ def get_n_save_batter_daily_data(batterID : int):
     df['GDP'] = df['GDP'].astype(int)
     df['seasonAVG'] = df['seasonAVG'].astype(float)
 
-    if IS_BLOB:
-        blob_name_path = os.path.join(DATASET_NAME,BATTER_DATASET_NAME,"batter_daily",f"{batterID}_Daily.parquet")
-        parquet_data = df.to_parquet(engine="pyarrow", index=False)
-
-        wasb_hook.load_string(
-            string_data=parquet_data,
-            container_name=container_name,
-            blob_name=blob_name_path,
-            overwrite=True
-        )
-
-    else:
-        daily_dir_path = os.path.join(BATTER_DATASET_DIR, "batter_daily")
-        daily_file_path = os.path.join(daily_dir_path, f"{batterID}_Daily.parquet")
-
-        df.to_parquet(daily_file_path, engine="pyarrow",index=False)
+    daily_dir_path = os.path.join(BATTER_DATASET_DIR, "batter_daily")
+    save_df(
+        df,
+        os.path.join(DATASET_NAME,BATTER_DATASET_NAME,"batter_daily",f"{batterID}_Daily.parquet"),
+        os.path.join(daily_dir_path, f"{batterID}_Daily.parquet")
+    )
 
 
 
 if __name__ == "__main__":
+    drivers = [driver]
     try:
+        if NUM_PROCESS > 1:
+            if IS_BLOB:
+                for i in range(NUM_PROCESS-1):
+                    d = webdriver.Remote(
+                        command_executor=command_executor_url,
+                        options=options
+                    )
+                    drivers.append(d)
+            else:
+                for i in range(NUM_PROCESS-1):
+                    d = webdriver.Chrome(options=options)
+                    drivers.append(d)
+
         if not IS_BLOB:
             daily_dir_path = os.path.join(BATTER_DATASET_DIR, "batter_daily")
             if not os.path.exists(daily_dir_path):
@@ -196,9 +201,9 @@ if __name__ == "__main__":
 
         for i in range(0, NUM_PROCESS):
             if i == NUM_PROCESS-1 : 
-                process_list.append(Process(target=batter_daily_work, args=(shared_number_list[i],i,1)))
+                process_list.append(Process(target=batter_daily_work, args=(shared_number_list[i],i,1,drivers[i])))
             else : 
-                process_list.append(Process(target=batter_daily_work, args=(shared_number_list[i],i,1)))
+                process_list.append(Process(target=batter_daily_work, args=(shared_number_list[i],i,1,drivers[i])))
 
         for process in process_list:
             process.start()
@@ -210,4 +215,5 @@ if __name__ == "__main__":
 
         print(f"{end_time-st_time} s")
     finally:
-        driver.quit()
+        for d in drivers:
+            d.quit()

@@ -17,7 +17,7 @@ DYNAMIC_SLEEP_TIME = CONST_SLEEP_TIME
 #####
 
 
-def pitcher_situation_work(shared_number_list, index : int, attempt : int):
+def pitcher_situation_work(shared_number_list, index : int, attempt : int, driver):
     '''
     multiprocessing 돌리는 함수
     '''
@@ -27,7 +27,7 @@ def pitcher_situation_work(shared_number_list, index : int, attempt : int):
         while(len(shared_number_list) >= 1):
             pitcherID = shared_number_list[0]
             print(f"Process-{index} processing: {pitcherID}")
-            get_n_save_pitcher_situation_data(pitcherID)
+            get_n_save_pitcher_situation_data(pitcherID, driver)
             shared_number_list.pop(0)
         exit(0)
     except Exception as e:
@@ -38,16 +38,15 @@ def pitcher_situation_work(shared_number_list, index : int, attempt : int):
                 print(item)
             print("let's retry")
             time.sleep(SLEEP_TIME_BEFORE_RETRY)
-            pitcher_situation_work(shared_number_list, index, attempt=attempt+1)
+            pitcher_situation_work(shared_number_list, index, attempt=attempt+1, driver=driver)
         else:
             print("exceed retry limit")
             exit(1)
 
 
-
-def get_n_save_pitcher_situation_data(pitcherID : int):
+def get_n_save_pitcher_situation_data(pitcherID : int, driver):
     '''
-    CURRENT YEAR 상황별 기록 가져오기
+    현재부터 MIN_YEAR+1 년까지 상황별 기록 가져오기
     '''
     def set_initial_page_setting() :
         driver.get(f'https://www.koreabaseball.com/Record/Player/PitcherDetail/Situation.aspx?playerId={pitcherID}')
@@ -61,8 +60,8 @@ def get_n_save_pitcher_situation_data(pitcherID : int):
     # driver.get(f'https://www.koreabaseball.com/Record/Player/PitcherDetail/Situation.aspx?playerId={pitcherID}')
     # driver.implicitly_wait(3)
     set_initial_page_setting()
-    year_selector = Select(driver.find_element(by=By.NAME, value="ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlYear"))
 
+    year_selector = Select(driver.find_element(by=By.NAME, value="ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlYear"))
     year_selector.select_by_value(CURRENT_YEAR)
     driver.implicitly_wait(DYNAMIC_SLEEP_TIME)
 
@@ -127,25 +126,32 @@ def get_n_save_pitcher_situation_data(pitcherID : int):
     df['BK'] = df['BK'].astype(int)
     df['AVG'] = df['AVG'].astype(float)
 
-    if IS_BLOB:
-        blob_name_path = os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,"pitcher_situation",f"{pitcherID}_Situation.parquet")
-        parquet_data = df.to_parquet(engine="pyarrow", index=False)
 
-        wasb_hook.load_string(
-            string_data=parquet_data,
-            container_name=container_name,
-            blob_name=blob_name_path,
-            overwrite=True
-        )
-    else:
-        situation_dir_path = os.path.join(PITCHER_DATASET_DIR, "pitcher_situation")
-        situation_file_path = os.path.join(situation_dir_path, f"{pitcherID}_Situation.parquet")
-
-        df.to_parquet(situation_file_path, engine="pyarrow",index=False)
+    situation_dir_path = os.path.join(PITCHER_DATASET_DIR, "pitcher_situation")
+    save_df(
+        df,
+        os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,"pitcher_situation",f"{pitcherID}_Situation.parquet"),
+        os.path.join(situation_dir_path, f"{pitcherID}_Situation.parquet")
+    )
 
 
 if __name__ == "__main__":
+    drivers = [driver]
     try:
+        if NUM_PROCESS > 1:
+            if IS_BLOB:
+                for i in range(NUM_PROCESS-1):
+                    d = webdriver.Remote(
+                        command_executor=command_executor_url,
+                        options=options
+                    )
+                    drivers.append(d)
+            else:
+                for i in range(NUM_PROCESS-1):
+                    d = webdriver.Chrome(options=options)
+                    drivers.append(d)
+
+
         if not IS_BLOB:
             situation_dir_path = os.path.join(PITCHER_DATASET_DIR, "pitcher_situation")
             if not os.path.exists(situation_dir_path):
@@ -181,9 +187,9 @@ if __name__ == "__main__":
         
         for i in range(0, NUM_PROCESS):
             if i == NUM_PROCESS-1 : 
-                process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1)))
+                process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1,drivers[i])))
             else : 
-                process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1)))
+                process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1,drivers[i])))
 
         for process in process_list:
             process.start()
@@ -195,4 +201,5 @@ if __name__ == "__main__":
 
         print(f"{end_time-st_time} s")
     finally:
-        driver.quit()
+        for d in drivers:
+            d.quit()
