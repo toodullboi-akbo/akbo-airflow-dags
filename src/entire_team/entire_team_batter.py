@@ -195,6 +195,7 @@ def save_whole_year_team_batter_data():
             os.path.join(TEAM_DATASET_DIR,"batter",f"Team_Batter_{year}.parquet")
         )
 
+
         prev_button = driver.find_element(by=By.CLASS_NAME, value="prev")
         prev_button.send_keys(Keys.RETURN)
         driver.implicitly_wait(10)
