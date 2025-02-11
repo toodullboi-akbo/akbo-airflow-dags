@@ -52,6 +52,8 @@ def save_current_year_team_pitcher_data():
     # len(td_data_element) == 18
 
     for i in range(0,len(td_data),18):
+        if((len(td_data)-i) < 18) : break
+
         team_name = td_data[i+1].text
         team_ERA = td_data[i+2].text
         team_G = td_data[i+3].text
@@ -111,6 +113,8 @@ def save_current_year_team_pitcher_data():
     # len(td_data_element) == 17
 
     for i in range(0,len(td_data),17):
+        if((len(td_data)-i) < 17) : break
+
         team_CG = td_data[i+3].text
         team_SHO = td_data[i+4].text
         team_QS = td_data[i+5].text

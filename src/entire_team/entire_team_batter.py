@@ -52,8 +52,8 @@ def save_whole_year_team_batter_data():
 
         td_data = driver.find_elements(by=By.TAG_NAME, value="td")
         # len(td_data_element) == 15
-
         for i in range(0,len(td_data),15):
+            if((len(td_data)-i) < 15) : break
             team_name = td_data[i+1].text
             team_AVG = td_data[i+2].text
             team_G = td_data[i+3].text
@@ -102,6 +102,7 @@ def save_whole_year_team_batter_data():
         # len(td_data_element) == 14
 
         for i in range(0,len(td_data),14):
+            if((len(td_data)-i) < 14) : break
             team_BB = td_data[i+3].text
             team_IBB = td_data[i+4].text
             team_HBP = td_data[i+5].text

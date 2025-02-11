@@ -51,6 +51,8 @@ def save_whole_year_team_fielder_data():
         # len(td_data_element) == 13
 
         for i in range(0,len(td_data),13):
+            if((len(td_data)-i) < 13) : break
+
             team_name = td_data[i+1].text
             team_G = td_data[i+2].text
             team_E = td_data[i+3].text

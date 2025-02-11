@@ -50,6 +50,8 @@ def save_current_year_team_runner_data():
     # len(td_data_element) == 9
 
     for i in range(0,len(td_data),9):
+        if((len(td_data)-i) < 9) : break
+
         team_name = td_data[i+1].text
         team_G = td_data[i+2].text
         team_SBA = td_data[i+3].text
