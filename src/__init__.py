@@ -119,7 +119,7 @@ else:
 CURRENT_YEAR =  "2024" # str(datetime.now().year)
 LEGACY_YEAR = "2001" # LEGACY start year ( from beginnig to 2001 )
 MIN_YEAR = LEGACY_YEAR # MIN_YEAR + 1 까지 저장함
-TEAM_MIN_YEAR = LEGACY_YEAR-1
+TEAM_MIN_YEAR = "2000"
 CONST_SLEEP_TIME = 3
 ###############
 NUM_PROCESS = 3
