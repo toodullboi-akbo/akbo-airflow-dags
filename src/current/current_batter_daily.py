@@ -59,7 +59,12 @@ def get_n_save_batter_daily_data(batterID : int, driver):
     # driver.get(f'https://www.koreabaseball.com/Record/Player/HitterDetail/Daily.aspx?playerId={batterID}')
     # driver.implicitly_wait(3)
     set_initial_page_setting()
-    
+    position_preference_data = driver.find_element(by=By.ID, value = 'cphContents_cphContents_cphContents_playerProfile_lblPosition')
+    position_text = position_preference_data.text.split('(')[0] if len(position_preference_data.text.split('(')[0])>0 else "-"
+    preference_text = position_preference_data.text.split('(')[1][:-1]
+    throwing_text = preference_text[0:2]
+    hitting_text = preference_text[2:]
+
 
     year_selector = Select(driver.find_element(by=By.NAME, value="ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlYear"))
     year_selector.select_by_value(CURRENT_YEAR)
@@ -99,6 +104,9 @@ def get_n_save_batter_daily_data(batterID : int, driver):
 
             result.append(
                 [batterID]+
+                [position_text]+
+                [throwing_text]+
+                [hitting_text]+
                 [stat_date]+
                 [stat_opp]+
                 [stat_PA]+
@@ -119,7 +127,7 @@ def get_n_save_batter_daily_data(batterID : int, driver):
             )
 
 
-    df = pd.DataFrame(result,columns=('id', 'date', 'opp', 'PA','AB','R','H','2B',
+    df = pd.DataFrame(result,columns=('id', 'position', 'throwing', 'hitting', 'date', 'opp', 'PA','AB','R','H','2B',
                                     '3B','HR','RBI','SB','CS','BB','HBP','SO','GDP','seasonAVG'))
 
     df = df.replace("-",value=np.nan)

@@ -141,8 +141,8 @@ def get_n_save_whole_year_runner_data() -> set:
 if __name__ == "__main__":
     try:
         st_time = time.time()
-        batter_number_list = list(get_n_save_whole_year_runner_data())
-        print(f"number of distinct runner ::: {len(batter_number_list)}")
+        runner_number_list = list(get_n_save_whole_year_runner_data())
+        print(f"number of distinct runner ::: {len(runner_number_list)}")
         
         end_time = time.time()
 

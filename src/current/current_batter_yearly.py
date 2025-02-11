@@ -316,11 +316,17 @@ if __name__ == "__main__":
             "Numbers" : batter_number_list
         })
 
-        save_df(
-            df,
-            CURRENT_BATTER_NUMBER_NAME_PATH,
-            CURRENT_BATTER_NUMBER_NAME_PATH
-        )
+        if IS_BLOB:
+            blob_name_path = ENTIRE_BATTER_NUMBER_NAME_PATH
+            csv_data = df.to_csv(encoding='utf-8',mode='w',index=False)
+            wasb_hook.load_string(
+                string_data=csv_data,
+                container_name=container_name,
+                blob_name=blob_name_path,
+                overwrite=True
+            )
+        else:
+            df.to_csv(ENTIRE_BATTER_NUMBER_PATH,encoding='utf-8',mode='w',index=False)
         
         end_time = time.time()
         print(f"{end_time-st_time} s")

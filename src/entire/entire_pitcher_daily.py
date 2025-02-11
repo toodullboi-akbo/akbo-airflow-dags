@@ -61,6 +61,11 @@ def get_n_save_pitcher_daily_data(pitcherID : int, driver):
     # driver.implicitly_wait(3)
 
     set_initial_page_setting()
+    position_preference_data = driver.find_element(by=By.ID, value = 'cphContents_cphContents_cphContents_playerProfile_lblPosition')
+    position_text = position_preference_data.text.split('(')[0] if len(position_preference_data.text.split('(')[0])>0 else "-"
+    preference_text = position_preference_data.text.split('(')[1][:-1]
+    throwing_text = preference_text[0:2]
+    hitting_text = preference_text[2:]
 
     year_selector = Select(driver.find_element(by=By.NAME, value="ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlYear"))
 
@@ -102,6 +107,9 @@ def get_n_save_pitcher_daily_data(pitcherID : int, driver):
 
                 result.append(
                     [pitcherID]+
+                    [position_text]+
+                    [throwing_text]+
+                    [hitting_text]+
                     [stat_date]+
                     [stat_opp]+
                     [stat_cat]+
@@ -120,7 +128,7 @@ def get_n_save_pitcher_daily_data(pitcherID : int, driver):
                 )
 
 
-    df = pd.DataFrame(result,columns=('id', 'date', 'opp', 'cat','res','gameERA','TBF','IP',
+    df = pd.DataFrame(result,columns=('id', 'position', 'throwing', 'hitting', 'date', 'opp', 'cat','res','gameERA','TBF','IP',
                                     'H','HR','BB','HBP','SO','R','ER','seasonERA'))
 
     df = df.replace("-",np.nan)
