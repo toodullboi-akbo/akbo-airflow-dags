@@ -55,13 +55,32 @@ with DAG(
         bash_command="python /opt/airflow/dags/repo/src/current/current_runner.py"
     )
 
+    current_team_batter_task = BashOperator(
+        task_id = "current_team_batter",
+        bash_command="python /opt/airflow/dags/repo/src/current_team/current_team_batter.py"
+    )
+    current_team_pitcher_task = BashOperator(
+        task_id = "current_team_pitcher",
+        bash_command="python /opt/airflow/dags/repo/src/current_team/current_team_pitcher.py"
+    )
+    current_team_fielder_task = BashOperator(
+        task_id = "current_team_fielder",
+        bash_command="python /opt/airflow/dags/repo/src/current_team/current_team_fielder.py"
+    )
+    current_team_runner_task = BashOperator(
+        task_id = "current_team_runner",
+        bash_command="python /opt/airflow/dags/repo/src/current_team/current_team_runner.py"
+    )
+
+
+
     startTask = EmptyOperator(task_id="stark_task")
 
 
     startTask >> [current_batter_yearly_task, current_pitcher_yearly_task, current_fielder_task, current_runner_task]
     current_batter_yearly_task >> current_batter_situation_task >> current_batter_daily_task
     current_pitcher_yearly_task >> current_pitcher_situation_task >> current_pitcher_daily_task
-    current_fielder_task
-    current_runner_task
+    current_fielder_task >> current_team_pitcher_task >> current_team_fielder_task
+    current_runner_task >> current_team_batter_task >> current_team_runner_task
 
 
