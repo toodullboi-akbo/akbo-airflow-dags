@@ -66,7 +66,7 @@ def save_whole_year_team_pitcher_data():
             team_IP_float = 0
             for item in team_IP.split(" "):
                 fraction = Fraction(item)
-                stat_IP_float += float(fraction)
+                team_IP_float += float(fraction)
 
             team_H = td_data[i+10].text
             team_HR = td_data[i+11].text
