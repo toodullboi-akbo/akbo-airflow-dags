@@ -50,6 +50,7 @@ RUNNER_DATASET_NAME = "runner_datasets"
 TEAM_DATASET_NAME = "team_datasets"
 LEGACY_DATASET_NAME = "legacy"
 YEARLY_DATASET_NAME = "yearly"
+VERSUS_DATASET_NAME = "versus"
 
 DATASET_DIR = ""
 BATTER_DATASET_DIR = ""
@@ -61,6 +62,7 @@ BATTER_LEGACY_DATASET_DIR = ""
 PITCHER_YEARLY_DATASET_DIR = ""
 PITCHER_LEGACY_DATASET_DIR = ""
 TEAM_DATASET_DIR = ""
+VERSUS_DATASET_DIR = ""
 
 if not IS_BLOB:
     DATASET_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), DATASET_NAME)
@@ -81,6 +83,9 @@ if not IS_BLOB:
     TEAM_DATASET_DIR = os.path.join(DATASET_DIR, TEAM_DATASET_NAME)
     if not os.path.exists(TEAM_DATASET_DIR):
         os.mkdir(TEAM_DATASET_DIR)
+    VERSUS_DATASET_DIR = os.path.join(DATASET_DIR, VERSUS_DATASET_NAME)
+    if not os.path.exists(VERSUS_DATASET_DIR):
+        os.mkdir(VERSUS_DATASET_DIR)
     BATTER_YEARLY_DATASET_DIR = os.path.join(BATTER_DATASET_DIR, YEARLY_DATASET_NAME)
     if not os.path.exists(BATTER_YEARLY_DATASET_DIR):
         os.mkdir(BATTER_YEARLY_DATASET_DIR)
@@ -93,6 +98,8 @@ if not IS_BLOB:
     PITCHER_LEGACY_DATASET_DIR = os.path.join(PITCHER_DATASET_DIR, LEGACY_DATASET_NAME)
     if not os.path.exists(PITCHER_LEGACY_DATASET_DIR):
         os.mkdir(PITCHER_LEGACY_DATASET_DIR)
+
+        
 
     
 ###############
@@ -139,7 +146,6 @@ def save_df(df, blob_name_path,local_file_path):
         )
     else:
         df.to_parquet(local_file_path, engine="pyarrow",index=False)
-
 
 
 #################
