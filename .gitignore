@@ -3,3 +3,4 @@ secret/
 **/__pycache__/
 **/kbo-datasets/
 parquet_reader.py
+parquet_data_changer.py

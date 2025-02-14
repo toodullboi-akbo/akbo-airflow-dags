@@ -17,7 +17,7 @@ DYNAMIC_SLEEP_TIME = CONST_SLEEP_TIME
 #####
 
 
-def pitcher_situation_work(shared_number_list, index : int, attempt : int, driver):
+def pitcher_situation_work(shared_number_list, index : int, attempt : int):
     '''
     multiprocessing 돌리는 함수
     '''
@@ -27,7 +27,7 @@ def pitcher_situation_work(shared_number_list, index : int, attempt : int, drive
         while(len(shared_number_list) >= 1):
             pitcherID = shared_number_list[0]
             print(f"Process-{index} processing: {pitcherID}")
-            get_n_save_pitcher_situation_data(pitcherID, driver)
+            get_n_save_pitcher_situation_data(pitcherID)
             shared_number_list.pop(0)
         exit(0)
     except Exception as e:
@@ -38,13 +38,13 @@ def pitcher_situation_work(shared_number_list, index : int, attempt : int, drive
                 print(item)
             print("let's retry")
             time.sleep(SLEEP_TIME_BEFORE_RETRY)
-            pitcher_situation_work(shared_number_list, index, attempt=attempt+1, driver=driver)
+            pitcher_situation_work(shared_number_list, index, attempt=attempt+1)
         else:
             print("exceed retry limit")
             exit(1)
 
 
-def get_n_save_pitcher_situation_data(pitcherID : int, driver):
+def get_n_save_pitcher_situation_data(pitcherID : int):
     '''
     현재부터 MIN_YEAR+1 년까지 상황별 기록 가져오기
     '''
@@ -61,7 +61,7 @@ def get_n_save_pitcher_situation_data(pitcherID : int, driver):
     # driver.implicitly_wait(3)
     set_initial_page_setting()
     position_preference_data = driver.find_element(by=By.ID, value = 'cphContents_cphContents_cphContents_playerProfile_lblPosition')
-    position_text = position_preference_data.text.split('(')[0] if len(position_preference_data.text.split('(')[0])>0 else "-"
+    position_text = position_preference_data.text.split('(')[0] if len(position_preference_data.text.split('(')[0])>0 else "불명"
     preference_text = position_preference_data.text.split('(')[1][:-1]
     throwing_text = preference_text[0:2]
     hitting_text = preference_text[2:]
@@ -147,21 +147,7 @@ def get_n_save_pitcher_situation_data(pitcherID : int, driver):
 
 
 if __name__ == "__main__":
-    drivers = [driver]
     try:
-        if NUM_PROCESS > 1:
-            if IS_BLOB:
-                for i in range(NUM_PROCESS-1):
-                    d = webdriver.Remote(
-                        command_executor=command_executor_url,
-                        options=options
-                    )
-                    drivers.append(d)
-            else:
-                for i in range(NUM_PROCESS-1):
-                    d = webdriver.Chrome(options=options)
-                    drivers.append(d)
-
 
         if not IS_BLOB:
             situation_dir_path = os.path.join(PITCHER_DATASET_DIR, "pitcher_situation")
@@ -198,9 +184,9 @@ if __name__ == "__main__":
         
         for i in range(0, NUM_PROCESS):
             if i == NUM_PROCESS-1 : 
-                process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1,drivers[i])))
+                process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1)))
             else : 
-                process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1,drivers[i])))
+                process_list.append(Process(target=pitcher_situation_work, args=(shared_number_list[i],i,1)))
 
         for process in process_list:
             process.start()
@@ -212,5 +198,4 @@ if __name__ == "__main__":
 
         print(f"{end_time-st_time} s")
     finally:
-        for d in drivers:
-            d.quit()
+        driver.quit()
