@@ -25,7 +25,26 @@ def wait_element_for_selected_attribute(BY, VALUE):
 
 SLEEP_TIME = 0.5
 
-def save_whole_pitcher_versus_batter_data():
+
+def pitcher_versus_batter_work(team_start_idx : int, team_end_idx : int, attempt : int):
+    try:
+        save_whole_pitcher_versus_batter_data(team_start_idx, team_end_idx)
+        exit(0)
+    except Exception as e:
+        if attempt < MAX_RETRIES:
+            SLEEP_TIME = SLEEP_TIME * 2
+            for item in traceback.format_exception(e):
+                print(item)
+            print("let's retry")
+            time.sleep(SLEEP_TIME_BEFORE_RETRY)
+            pitcher_versus_batter_work(team_start_idx, team_end_idx, attempt=attempt+1)
+        else:
+            print("exceed retry limit")
+            exit(1)
+
+
+
+def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : int):
     def set_initial_page_setting() :
         driver.get('https://www.koreabaseball.com/Record/Etc/HitVsPit.aspx')
         driver.implicitly_wait(3)
@@ -40,7 +59,7 @@ def save_whole_pitcher_versus_batter_data():
     # pitcher_team_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherTeam'))
 
     pitcher_team_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherTeam'))
-    for pitcher_team_idx in range(1, len(pitcher_team_selector.options)):
+    for pitcher_team_idx in range(team_start_idx, team_end_idx):
         # pitcher_team_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherTeam'))
         pitcher_team_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherTeam'))
         pitcher_team_selector.select_by_index(pitcher_team_idx)
@@ -52,7 +71,7 @@ def save_whole_pitcher_versus_batter_data():
         selected_pitcher_team_element = [ option for option in pitcher_team_selector.options if option.get_attribute("selected")]
         selected_pitcher_team = selected_pitcher_team_element[0].text
 
-        print(f"selected_pitcher_team :: {selected_pitcher_team}")
+        print(f"process with {team_start_idx} selected_pitcher_team :: {selected_pitcher_team}")
 
         # pitcher_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherPlayer'))
         pitcher_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherPlayer'))
@@ -69,7 +88,7 @@ def save_whole_pitcher_versus_batter_data():
             selected_pitcher = selected_pitcher_element[0].text
             selected_pitcher_id = selected_pitcher_element[0].get_attribute("value")
 
-            print(f"selected_pitcher :: {selected_pitcher}")
+            print(f"process with {team_start_idx} selected_pitcher :: {selected_pitcher}")
 
 
             pitcher_versus_data = []
@@ -89,8 +108,6 @@ def save_whole_pitcher_versus_batter_data():
                 selected_batter_team_element = [ option for option in batter_team_selector.options if option.get_attribute("selected")]
                 selected_batter_team = selected_batter_team_element[0].text
 
-                print(f"selected_batter_team :: {selected_batter_team}")
-
                 if(selected_batter_team == selected_pitcher_team) : continue
                 batter_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterPlayer'))
                 # batter_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterPlayer'))
@@ -107,8 +124,6 @@ def save_whole_pitcher_versus_batter_data():
                     selected_batter = selected_batter_element[0].text
                     selected_batter_id = selected_batter_element[0].get_attribute("value")
                     
-                    print(f"selected_batter :: {selected_batter}")
-
 
                     search_button = driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$btnSearch')
                     search_button.send_keys(Keys.RETURN)
@@ -182,7 +197,22 @@ def save_whole_pitcher_versus_batter_data():
 if __name__ == "__main__":
     try :
         st_time = time.time()
-        save_whole_pitcher_versus_batter_data()
+
+        NUMBER_OF_TEAM = 10
+        coef = 10 // NUM_PROCESS
+        process_list = []
+
+        for i in range(0, NUM_PROCESS):
+            if i == NUM_PROCESS-1 : 
+                process_list.append(Process(target=pitcher_versus_batter_work, args=(i*coef,10,1)))
+            else : 
+                process_list.append(Process(target=pitcher_versus_batter_work, args=(i*coef,coef+i*coef,1)))
+
+        for process in process_list:
+            process.start()
+        
+        for process in process_list:
+            process.join()
 
             
         end_time = time.time()
