@@ -131,7 +131,7 @@ def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : i
 
 
                 selected_batter_team = batter_team_selector.first_selected_option.text
-                print(f"process with {team_start_idx} selected_batter_team :: {selected_batter_team}")
+                # print(f"process with {team_start_idx} selected_batter_team :: {selected_batter_team}")
 
                 if(selected_batter_team == selected_pitcher_team) : continue
                 batter_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterPlayer'))
@@ -157,7 +157,7 @@ def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : i
                     # selected_batter_element = [ option for option in batter_selector.options if option.get_attribute("selected")]
                     old_element_batter = batter_selector.first_selected_option
                     selected_batter = old_element_batter.text
-                    print(f"process with {team_start_idx} selected_batter :: {selected_batter}")
+                    # print(f"process with {team_start_idx} selected_batter :: {selected_batter}")
 
                     selected_batter_id = batter_selector.first_selected_option.get_attribute("value")
                     
@@ -256,7 +256,7 @@ if __name__ == "__main__":
 
         for i in range(0, NUM_PROCESS):
             if i == NUM_PROCESS-1 : 
-                process_list.append(Process(target=pitcher_versus_batter_work, args=(1+i*coef,10,1)))
+                process_list.append(Process(target=pitcher_versus_batter_work, args=(1+i*coef,11,1)))
             else : 
                 process_list.append(Process(target=pitcher_versus_batter_work, args=(1+i*coef,1+coef+i*coef,1)))
         for process in process_list:
