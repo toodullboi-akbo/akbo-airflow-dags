@@ -145,10 +145,10 @@ def get_n_save_whole_year_batter_data() -> set:
     })
 
     df = df.replace("-",np.nan)
-    df['year'] = df['year'].astype(int)
-    df['id'] = df['id'].astype(int)
-    df['SAC'] = df['SAC'].astype(int)
-    df['SF'] = df['SF'].astype(int)
+    df['year'] = df['year'].astype('int32')
+    df['id'] = df['id'].astype('int32')
+    df['SAC'] = df['SAC'].astype('int32')
+    df['SF'] = df['SF'].astype('int32')
 
     save_df(
         df,
@@ -208,12 +208,12 @@ def get_n_save_whole_year_batter_data() -> set:
     })
 
     df = df.replace("-",np.nan)
-    df['year'] = df['year'].astype(int)
-    df['id'] = df['id'].astype(int)
-    df['IBB'] = df['IBB'].astype(int)
-    df['MH'] = df['MH'].astype(int)
-    df['RISP'] = df['RISP'].astype(float)
-    df['PHBA'] = df['PHBA'].astype(float)
+    df['year'] = df['year'].astype('int32')
+    df['id'] = df['id'].astype('int32')
+    df['IBB'] = df['IBB'].astype('int32')
+    df['MH'] = df['MH'].astype('int32')
+    df['RISP'] = df['RISP'].astype('float64')
+    df['PHBA'] = df['PHBA'].astype('float64')
 
     save_df(
         df,
@@ -273,13 +273,13 @@ def get_n_save_whole_year_batter_data() -> set:
     })
 
     df = df.replace("-",np.nan)
-    df['year'] = df['year'].astype(int)
-    df['id'] = df['id'].astype(int)
-    df['GO'] = df['GO'].astype(int)
-    df['AO'] = df['AO'].astype(int)
-    df['GWRBI'] = df['GWRBI'].astype(int)
-    df['PPA'] = df['PPA'].astype(float)
-    df['XR'] = df['XR'].astype(float)
+    df['year'] = df['year'].astype('int32')
+    df['id'] = df['id'].astype('int32')
+    df['GO'] = df['GO'].astype('int32')
+    df['AO'] = df['AO'].astype('int32')
+    df['GWRBI'] = df['GWRBI'].astype('int32')
+    df['PPA'] = df['PPA'].astype('float64')
+    df['XR'] = df['XR'].astype('float64')
 
     save_df(
         df,

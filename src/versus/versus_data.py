@@ -183,6 +183,7 @@ def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : i
                     if(len(td_data) < 14): 
                         pass
                     else:
+                        AVG = td_data[0].text
                         PA = td_data[1].text
                         AB = td_data[2].text
                         H = td_data[3].text
@@ -193,6 +194,9 @@ def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : i
                         BB = td_data[8].text
                         HBP = td_data[9].text
                         SO = td_data[10].text
+                        SLG = td_data[11].text
+                        OBP = td_data[12].text
+                        OPS = td_data[13].text
 
                         pitcher_versus_data.append(
                             [year]+
@@ -200,6 +204,7 @@ def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : i
                             [selected_pitcher_id]+
                             [selected_batter]+
                             [selected_batter_id]+
+                            [AVG] +
                             [PA] +
                             [AB] +
                             [H]+
@@ -209,7 +214,10 @@ def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : i
                             [RBI]+
                             [BB] +
                             [HBP]+
-                            [SO] 
+                            [SO] +
+                            [SLG] +
+                            [OBP] +
+                            [OPS]
                         )
 
 
@@ -221,23 +229,30 @@ def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : i
 
             # saving df
             df = pd.DataFrame(pitcher_versus_data,columns=(
-                'year','pitcher', 'pitcher_id', 'batter', 'batter_id','PA','AB','H','2B','3B','HR','RBI','BB','HBP','SO'
+                'year','pitcher', 'pitcher_id', 'batter', 'batter_id','AVG', 
+                'PA','AB','H','2B','3B','HR','RBI','BB','HBP','SO',
+                'SLG','OBP','OPS'
                 ))
 
             df = df.replace("-",np.nan)
-            df['year'] = df['year'].astype(int)
-            df['pitcher_id'] = df['pitcher_id'].astype(int)
-            df['batter_id'] = df['batter_id'].astype(int)
-            df['PA'] = df['PA'].astype(int)
-            df['AB'] = df['AB'].astype(int)
-            df['H'] = df['H'].astype(int)
-            df['2B'] = df['2B'].astype(int)
-            df['3B'] = df['3B'].astype(int)
-            df['HR'] = df['HR'].astype(int)
-            df['RBI'] = df['RBI'].astype(int)
-            df['BB'] = df['BB'].astype(int)
-            df['HBP'] = df['HBP'].astype(int)
-            df['SO'] = df['SO'].astype(int)
+            df['year'] = df['year'].astype('int32')
+            df['pitcher_id'] = df['pitcher_id'].astype('int32')
+            df['batter_id'] = df['batter_id'].astype('int32')
+            df['PA'] = df['PA'].astype('int32')
+            df['AB'] = df['AB'].astype('int32')
+            df['H'] = df['H'].astype('int32')
+            df['2B'] = df['2B'].astype('int32')
+            df['3B'] = df['3B'].astype('int32')
+            df['HR'] = df['HR'].astype('int32')
+            df['RBI'] = df['RBI'].astype('int32')
+            df['BB'] = df['BB'].astype('int32')
+            df['HBP'] = df['HBP'].astype('int32')
+            df['SO'] = df['SO'].astype('int32')
+            df['AVG'] = df['AVG'].astype('float64')
+            df['SLG'] = df['SLG'].astype('float64')
+            df['OBP'] = df['OBP'].astype('float64')
+            df['OPS'] = df['OPS'].astype('float64')
+
 
             save_df(
                 df,
@@ -254,11 +269,16 @@ if __name__ == "__main__":
         coef = 10 // NUM_PROCESS
         process_list = []
 
-        for i in range(0, NUM_PROCESS):
-            if i == NUM_PROCESS-1 : 
-                process_list.append(Process(target=pitcher_versus_batter_work, args=(1+i*coef,11,1)))
-            else : 
-                process_list.append(Process(target=pitcher_versus_batter_work, args=(1+i*coef,1+coef+i*coef,1)))
+        # for i in range(0, NUM_PROCESS):
+        #     if i == NUM_PROCESS-1 : 
+        #         process_list.append(Process(target=pitcher_versus_batter_work, args=(1+i*coef,11,1)))
+        #     else : 
+        #         process_list.append(Process(target=pitcher_versus_batter_work, args=(1+i*coef,1+coef+i*coef,1)))
+        process_list.append(Process(target=pitcher_versus_batter_work, args=(7,8,1)))
+        process_list.append(Process(target=pitcher_versus_batter_work, args=(8,9,1)))
+        process_list.append(Process(target=pitcher_versus_batter_work, args=(9,10,1)))
+        process_list.append(Process(target=pitcher_versus_batter_work, args=(10,11,1)))
+
         for process in process_list:
             process.start()
         

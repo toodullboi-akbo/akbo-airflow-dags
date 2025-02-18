@@ -10,7 +10,7 @@ from datetime import datetime
 
 ##################################################################
 ###############
-IS_BLOB = True
+IS_BLOB = False
 ###############
 if IS_BLOB:
     from airflow.providers.microsoft.azure.hooks.wasb import WasbHook

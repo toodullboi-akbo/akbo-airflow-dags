@@ -140,19 +140,19 @@ def get_n_save_whole_year_fielding_data() -> set:
 
 
         df = df.replace("-",value=np.nan)
-        df['year'] = df['year'].astype(int)
-        df['id'] = df['id'].astype(int)
-        df['G'] = df['G'].astype(int)
-        df['GS'] = df['GS'].astype(int)
-        df['IP'] = df['IP'].astype(float)
-        df['E'] = df['E'].astype(int)
-        df['PKO'] = df['PKO'].astype(int)
-        df['PO'] = df['PO'].astype(int)
-        df['A'] = df['A'].astype(int)
-        df['DP'] = df['DP'].astype(int)
-        df['PB'] = df['PB'].astype(int)
-        df['SB'] = df['SB'].astype(int)
-        df['CS'] = df['CS'].astype(int)
+        df['year'] = df['year'].astype('int32')
+        df['id'] = df['id'].astype('int32')
+        df['G'] = df['G'].astype('int32')
+        df['GS'] = df['GS'].astype('int32')
+        df['IP'] = df['IP'].astype('float64')
+        df['E'] = df['E'].astype('int32')
+        df['PKO'] = df['PKO'].astype('int32')
+        df['PO'] = df['PO'].astype('int32')
+        df['A'] = df['A'].astype('int32')
+        df['DP'] = df['DP'].astype('int32')
+        df['PB'] = df['PB'].astype('int32')
+        df['SB'] = df['SB'].astype('int32')
+        df['CS'] = df['CS'].astype('int32')
 
         save_df(
             df,

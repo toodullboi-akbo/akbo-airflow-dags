@@ -80,14 +80,14 @@ def save_whole_year_team_runner_data():
         df = pd.DataFrame(basic_data,columns=('year','team_name', 'team_G', 'team_SBA', 'team_SB','team_CS','team_SB_PER','team_OOB','team_PKO'))
 
         df = df.replace("-",np.nan)
-        df['year'] = df['year'].astype(int)
-        df['team_G'] = df['team_G'].astype(int)
-        df['team_SBA'] = df['team_SBA'].astype(int)
-        df['team_SB'] = df['team_SB'].astype(int)
-        df['team_CS'] = df['team_CS'].astype(int)
-        df['team_SB_PER'] = df['team_SB_PER'].astype(float)
-        df['team_OOB'] = df['team_OOB'].astype(int)
-        df['team_PKO'] = df['team_PKO'].astype(int)
+        df['year'] = df['year'].astype('int32')
+        df['team_G'] = df['team_G'].astype('int32')
+        df['team_SBA'] = df['team_SBA'].astype('int32')
+        df['team_SB'] = df['team_SB'].astype('int32')
+        df['team_CS'] = df['team_CS'].astype('int32')
+        df['team_SB_PER'] = df['team_SB_PER'].astype('float64')
+        df['team_OOB'] = df['team_OOB'].astype('int32')
+        df['team_PKO'] = df['team_PKO'].astype('int32')
 
         save_df(
             df,
