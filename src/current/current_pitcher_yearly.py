@@ -321,7 +321,7 @@ if __name__ == "__main__":
         })
 
         if IS_BLOB:
-            blob_name_path = ENTIRE_PITCHER_NUMBER_NAME_PATH
+            blob_name_path = CURRENT_PITCHER_NUMBER_NAME_PATH
             csv_data = df.to_csv(encoding='utf-8',mode='w',index=False)
             wasb_hook.load_string(
                 string_data=csv_data,
@@ -330,7 +330,7 @@ if __name__ == "__main__":
                 overwrite=True
             )
         else:
-            df.to_csv(ENTIRE_PITCHER_NUMBER_PATH,encoding='utf-8',mode='w',index=False)
+            df.to_csv(CURRENT_PITCHER_NUMBER_NAME_PATH,encoding='utf-8',mode='w',index=False)
 
 
 
