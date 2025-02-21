@@ -202,8 +202,10 @@ def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : i
                             [year]+
                             [selected_pitcher]+
                             [selected_pitcher_id]+
+                            [selected_pitcher_team]+
                             [selected_batter]+
                             [selected_batter_id]+
+                            [selected_batter_team]+
                             [AVG] +
                             [PA] +
                             [AB] +
@@ -229,7 +231,7 @@ def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : i
 
             # saving df
             df = pd.DataFrame(pitcher_versus_data,columns=(
-                'year','pitcher', 'pitcher_id', 'batter', 'batter_id','AVG', 
+                'year','pitcher', 'pitcher_id', 'pitcher_team', 'batter', 'batter_id', 'batter_team', 'AVG', 
                 'PA','AB','H','2B','3B','HR','RBI','BB','HBP','SO',
                 'SLG','OBP','OPS'
                 ))
@@ -269,16 +271,12 @@ if __name__ == "__main__":
         coef = 10 // NUM_PROCESS
         process_list = []
 
-        # for i in range(0, NUM_PROCESS):
-        #     if i == NUM_PROCESS-1 : 
-        #         process_list.append(Process(target=pitcher_versus_batter_work, args=(1+i*coef,11,1)))
-        #     else : 
-        #         process_list.append(Process(target=pitcher_versus_batter_work, args=(1+i*coef,1+coef+i*coef,1)))
-        process_list.append(Process(target=pitcher_versus_batter_work, args=(7,8,1)))
-        process_list.append(Process(target=pitcher_versus_batter_work, args=(8,9,1)))
-        process_list.append(Process(target=pitcher_versus_batter_work, args=(9,10,1)))
-        process_list.append(Process(target=pitcher_versus_batter_work, args=(10,11,1)))
-
+        for i in range(0, NUM_PROCESS):
+            if i == NUM_PROCESS-1 : 
+                process_list.append(Process(target=pitcher_versus_batter_work, args=(1+i*coef,11,1)))
+            else : 
+                process_list.append(Process(target=pitcher_versus_batter_work, args=(1+i*coef,1+coef+i*coef,1)))
+                
         for process in process_list:
             process.start()
         
