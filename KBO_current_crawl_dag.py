@@ -19,6 +19,7 @@ with DAG(
     default_args=default_args,
     description = "crawls current year data from kbo",
     schedule_interval="0 6 * * *",
+    max_active_runs=1,
     catchup=False
 ) as dag:
     current_batter_yearly_task = BashOperator(

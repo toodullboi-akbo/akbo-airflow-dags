@@ -20,6 +20,7 @@ with DAG(
     default_args=default_args,
     description = "crawls current year versus data from kbo",
     schedule_interval="0 10 * * 1",
+    max_active_runs=1,
     catchup=False
 ) as dag:
     current_versus_task = BashOperator(
