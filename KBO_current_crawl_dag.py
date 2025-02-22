@@ -1,19 +1,23 @@
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.empty import EmptyOperator
-
+from dag_setting import *
 from datetime import datetime, timedelta
+
+
 
 default_args = {
     "owner" : "toodullboi",
     "retries" : 5,
-    "retry_delay" : timedelta(minutes=5)
+    "retry_delay" : timedelta(minutes=5),
+    'start_date': datetime(2020, 3, 10, tzinfo=SEOUL_TZ),
 }
 
 with DAG(
     dag_id = "Current_Year_KBO_Crawler",
     default_args=default_args,
     description = "crawls current year data from kbo",
+    schedule_interval="0 6 * * *"
 ) as dag:
     current_batter_yearly_task = BashOperator(
         task_id = "current_batter_yearly",

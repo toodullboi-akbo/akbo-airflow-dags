@@ -1,7 +1,7 @@
 from airflow import DAG
 from airflow.operators.bash import BashOperator
 from airflow.operators.empty import EmptyOperator
-
+from dag_setting import *
 from datetime import datetime, timedelta
 
 default_args = {
