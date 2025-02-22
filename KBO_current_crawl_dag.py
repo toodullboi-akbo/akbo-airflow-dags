@@ -11,7 +11,7 @@ default_args = {
     "owner" : "toodullboi",
     "retries" : 5,
     "retry_delay" : timedelta(minutes=5),
-    'start_date': datetime(2025, 2, 22, tzinfo=SEOUL_TZ),
+    'start_date': datetime(2025, 1, 1, tzinfo=SEOUL_TZ),
 }
 
 with DAG(
