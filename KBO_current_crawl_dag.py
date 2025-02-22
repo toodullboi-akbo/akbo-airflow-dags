@@ -93,8 +93,8 @@ with DAG(
     startTask >> [current_batter_yearly_task, current_pitcher_yearly_task, current_fielder_task, current_runner_task]
     current_batter_yearly_task >> current_batter_situation_task >> current_batter_daily_task
     current_pitcher_yearly_task >> current_pitcher_situation_task >> current_pitcher_daily_task
-    current_fielder_task >> current_team_pitcher_task >> current_team_fielder_task
-    current_runner_task >> current_team_batter_task >> current_team_runner_task
-    [current_batter_daily_task, current_pitcher_daily_task, current_team_fielder_task, current_team_runner_task] >> submit_spark_job_player_team_stats_task
+    current_fielder_task >> [current_team_pitcher_task,  current_team_fielder_task]
+    current_runner_task >> [current_team_batter_task, current_team_runner_task]
+    [current_batter_daily_task, current_pitcher_daily_task,current_team_pitcher_task, current_team_batter_task, current_team_fielder_task, current_team_runner_task] >> submit_spark_job_player_team_stats_task
 
 
