@@ -69,41 +69,19 @@ def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : i
 
 
     #############################
-    # driver.get('https://www.koreabaseball.com/Record/Player/HitterBasic/Detail1.aspx')
-    # driver.implicitly_wait(3)
     set_initial_page_setting()
 
-    # pitcher_team_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherTeam'))
     pitcher_team_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherTeam'))
     for pitcher_team_idx in range(team_start_idx, team_end_idx):
-        # pitcher_team_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherTeam'))
         pitcher_team_selector = select_dropdown_wait(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherTeam', pitcher_team_idx)
-        # pitcher_team_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherTeam'))
-        # pitcher_team_selector.select_by_index(pitcher_team_idx)
-
-        # pitcher_team_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherTeam'))
-        # driver.implicitly_wait(10)
-        # time.sleep(SLEEP_TIME)
-        # pitcher_team_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherTeam'))
-        # selected_pitcher_team_element = [ option for option in pitcher_team_selector.options if option.get_attribute("selected")]
         selected_pitcher_team = pitcher_team_selector.first_selected_option.text
 
         print(f"process with {team_start_idx} selected_pitcher_team :: {selected_pitcher_team}")
 
-        # pitcher_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherPlayer'))
         pitcher_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherPlayer'))
         for pitcher_idx in range(1, len(pitcher_selector.options)):
-            # time.sleep(SLEEP_TIME)
-            # pitcher_selector = select_dropdown_wait(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherPlayer', pitcher_idx)
             pitcher_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherPlayer'))
             pitcher_selector.select_by_index(pitcher_idx)
-            # time.sleep(SLEEP_TIME)
-            # pitcher_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherPlayer'))
-            # driver.implicitly_wait(10)
-            # time.sleep(SLEEP_TIME)
-            # pitcher_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherPlayer'))
-            # selected_pitcher_element = [ option for option in pitcher_selector.options if option.get_attribute("selected")]
-            # selected_pitcher = selected_pitcher_element[0].text
             selected_pitcher = pitcher_selector.first_selected_option.text
             selected_pitcher_id = pitcher_selector.first_selected_option.get_attribute("value")
 
@@ -112,74 +90,38 @@ def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : i
 
             pitcher_versus_data = []
 
-            # batter_team_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterTeam'))
             batter_team_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterTeam'))
             for batter_team_idx in range(1, len(batter_team_selector.options)):
-                # time.sleep(SLEEP_TIME)
-                # batter_team_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterTeam'))
                 batter_team_selector = select_dropdown_wait(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterTeam',batter_team_idx)
-                # batter_team_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterTeam'))
-                # batter_team_selector.select_by_index(batter_team_idx)
-                # time.sleep(SLEEP_TIME)
-
-                # batter_team_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterTeam'))
-                # driver.implicitly_wait(10)
-
-                # time.sleep(SLEEP_TIME)
-                # batter_team_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterTeam'))
-                # selected_batter_team_element = [ option for option in batter_team_selector.options if option.get_attribute("selected")]
-
 
                 selected_batter_team = batter_team_selector.first_selected_option.text
-                # print(f"process with {team_start_idx} selected_batter_team :: {selected_batter_team}")
 
                 if(selected_batter_team == selected_pitcher_team) : continue
                 batter_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterPlayer'))
                 old_element_batter = batter_selector.first_selected_option
 
-                # batter_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterPlayer'))
                 batter_len = len(batter_selector.options)
                 for batter_idx in range(1, batter_len):
-                    # time.sleep(SLEEP_TIME)
-
-                    # batter_selector = select_dropdown_wait(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterPlayer', batter_idx)
-                    # WAIT.until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, r"select[name='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterPlayer'] option")))
-                    # batter_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterPlayer'))
                     batter_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterPlayer'))
                     batter_selector.select_by_index(batter_idx)
-                    # time.sleep(SLEEP_TIME)
-                    # batter_selector = Select(driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterPlayer'))
-
-                    # time.sleep(SLEEP_TIME)
-                    # driver.implicitly_wait(10)
-
-                    # batter_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterPlayer'))
-                    # selected_batter_element = [ option for option in batter_selector.options if option.get_attribute("selected")]
                     old_element_batter = batter_selector.first_selected_option
                     selected_batter = old_element_batter.text
-                    # print(f"process with {team_start_idx} selected_batter :: {selected_batter}")
 
                     selected_batter_id = batter_selector.first_selected_option.get_attribute("value")
                     
                     search_button = WAIT.until(EC.presence_of_element_located((By.NAME,'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$btnSearch')))
-                    # search_button = driver.find_element(by=By.NAME, value='ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$btnSearch')
                     search_button.send_keys(Keys.RETURN)
-                    # driver.implicitly_wait(10)
                     
                     try :
                         WAIT.until(EC.staleness_of(old_element_batter))
                     except TimeoutException:
                         pass
 
-                    # year_element = driver.find_element(by=By.ID, value='cphContents_cphContents_cphContents_lblLastDate')
                     year_element = WAIT.until(EC.presence_of_element_located((By.ID, 'cphContents_cphContents_cphContents_lblLastDate')))
                     year = year_element.text[:-1]
-                    # data gathering
 
-                    # td_data = driver.find_elements(by=By.TAG_NAME, value="td")
                     td_data = WAIT.until(EC.presence_of_all_elements_located((By.TAG_NAME,"td")))
 
-                    # len(td_data_element) == 14
                     if(len(td_data) < 14): 
                         pass
                     else:
