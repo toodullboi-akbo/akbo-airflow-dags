@@ -3,7 +3,7 @@ from airflow.operators.bash import BashOperator
 from airflow.operators.empty import EmptyOperator
 from dag_setting import *
 from datetime import datetime, timedelta
-from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
+from airflow.providers.cncf.kubernetes.operators.spark_kubernetes import SparkKubernetesOperator
 
 
 
