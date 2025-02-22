@@ -3,6 +3,7 @@ from airflow.operators.bash import BashOperator
 from airflow.operators.empty import EmptyOperator
 from dag_setting import *
 from datetime import datetime, timedelta
+from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 
 
 
@@ -10,7 +11,7 @@ default_args = {
     "owner" : "toodullboi",
     "retries" : 5,
     "retry_delay" : timedelta(minutes=5),
-    'start_date': datetime(2020, 3, 10, tzinfo=SEOUL_TZ),
+    'start_date': datetime(2025, 1, 1, tzinfo=SEOUL_TZ),
 }
 
 with DAG(
@@ -76,6 +77,12 @@ with DAG(
         bash_command="python /opt/airflow/dags/repo/src/current_team/current_team_runner.py"
     )
 
+    submit_spark_job_player_team_stats_task = SparkKubernetesOperator(
+        task_id = "submit_spark_job_player_team_stats",
+        namespace = "airflow",
+        application_file = "/src/spark/spark-submit-player-team-stats.yaml",
+        kubernetes_conn_id = "spark_operator_connection"
+    )
 
 
     startTask = EmptyOperator(task_id="stark_task")
@@ -86,5 +93,6 @@ with DAG(
     current_pitcher_yearly_task >> current_pitcher_situation_task >> current_pitcher_daily_task
     current_fielder_task >> current_team_pitcher_task >> current_team_fielder_task
     current_runner_task >> current_team_batter_task >> current_team_runner_task
+    [current_batter_daily_task, current_pitcher_daily_task, current_team_fielder_task, current_team_runner_task] >> submit_spark_job_player_team_stats_task
 
 

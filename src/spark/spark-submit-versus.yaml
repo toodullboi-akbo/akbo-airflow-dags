@@ -1,0 +1,52 @@
+apiVersion: sparkoperator.k8s.io/v1beta2
+kind: SparkApplication
+metadata:
+  name: submit_spark_job_versus
+  namespace: airflow
+spec:
+  type: Scala
+  mode: cluster
+  image: customairflowdocker.azurecr.io/airflow-spark-operator:latest
+  imagePullPolicy: Always
+  mainClass: akbo.main.versusMain
+  mainApplicationFile: "local:///opt/spark/jars/kbo-data-handler_2.12-1.0.0.jar"
+  sparkVersion: "3.5.2"
+  restartPolicy:
+    type: OnFailure
+  deps:
+    repositories:
+      - https://repo1.maven.org/maven2
+      - https://repository.apache.org/snapshots
+    packages:
+      - com.azure:azure-storage-blob:12.25.0
+      - com.azure:azure-identity:1.11.2
+      - com.microsoft.azure:azure-storage:8.6.6
+      - org.apache.hadoop:hadoop-azure:3.3.6
+      - org.apache.hadoop:hadoop-azure-datalake:3.3.6
+      - org.apache.hadoop:hadoop-common:3.3.6
+      - org.apache.hadoop:hadoop-client:3.3.6
+      - org.apache.hadoop:hadoop-client-api:3.3.6
+      - org.apache.hadoop:hadoop-client-runtime:3.3.6
+      - com.azure.cosmos.spark:azure-cosmos-spark_3-5_2-12:4.36.0
+
+
+  sparkConf:
+    "spark.jars.ivy": "/tmp/ivy-cache"
+
+
+  driver:
+    cores: 1
+    memory: "500m"
+    labels:
+      version: 3.5.2
+    serviceAccount: spark
+    env:
+      - name: SPARK_SUBMIT_OPTS
+        value: "-Dspark.jars.ivy=/tmp/ivy-cache"
+  executor:
+    cores: 1
+    instances: 2
+    memory: "500m"
+    env:
+      - name: SPARK_SUBMIT_OPTS
+        value: "-Dspark.jars.ivy=/tmp/ivy-cache"

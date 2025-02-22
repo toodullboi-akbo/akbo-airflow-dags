@@ -1,15 +1,15 @@
 apiVersion: sparkoperator.k8s.io/v1beta2
 kind: SparkApplication
 metadata:
-  name: submit_spark_job
+  name: submit_spark_job_player_team_stats
   namespace: airflow
 spec:
   type: Scala
   mode: cluster
   image: customairflowdocker.azurecr.io/airflow-spark-operator:latest
   imagePullPolicy: Always
-  mainClass: akbo.dataHandler
-  mainApplicationFile: "local:///opt/spark/jars/kbo-data-handler_2.12-0.1.0-SNAPSHOT.jar"
+  mainClass: akbo.main.statMain
+  mainApplicationFile: "local:///opt/spark/jars/kbo-data-handler_2.12-1.0.0.jar"
   sparkVersion: "3.5.2"
   restartPolicy:
     type: OnFailure
