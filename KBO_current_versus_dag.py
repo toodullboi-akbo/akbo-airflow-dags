@@ -12,13 +12,15 @@ default_args = {
     "retries" : 5,
     "retry_delay" : timedelta(minutes=5),
     'start_date': datetime(2025, 1, 1, tzinfo=SEOUL_TZ),
+    
 }
 
 with DAG(
     dag_id = "Current_Year_KBO_versus_Crawler",
     default_args=default_args,
     description = "crawls current year versus data from kbo",
-    schedule_interval="0 10 * * 1"
+    schedule_interval="0 10 * * 1",
+    catchup=False
 ) as dag:
     current_versus_task = BashOperator(
         task_id = "current_batter_yearly",
