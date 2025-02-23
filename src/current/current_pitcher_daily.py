@@ -146,7 +146,7 @@ def get_n_save_pitcher_daily_data(pitcherID : int, driver):
     daily_dir_path = os.path.join(PITCHER_DATASET_DIR, "pitcher_daily")
     save_df(
         df,
-        os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,"pitcher_daily",f"{pitcherID}_Daily.parquet"),
+        os.path.join(DATASET_NAME,CURRENT_DATASET_NAME,CURRENT_YEAR,PITCHER_DATASET_NAME,"pitcher_daily",f"{pitcherID}_Daily.parquet"),
         os.path.join(daily_dir_path, f"{pitcherID}_Daily.parquet")
     )
 

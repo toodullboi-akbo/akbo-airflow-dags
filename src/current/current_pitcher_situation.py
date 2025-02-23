@@ -138,7 +138,7 @@ def get_n_save_pitcher_situation_data(pitcherID : int, driver):
     situation_dir_path = os.path.join(PITCHER_DATASET_DIR, "pitcher_situation")
     save_df(
         df,
-        os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,"pitcher_situation",f"{pitcherID}_Situation.parquet"),
+        os.path.join(DATASET_NAME,CURRENT_DATASET_NAME,CURRENT_YEAR,PITCHER_DATASET_NAME,"pitcher_situation",f"{pitcherID}_Situation.parquet"),
         os.path.join(situation_dir_path, f"{pitcherID}_Situation.parquet")
     )
 

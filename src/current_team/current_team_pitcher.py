@@ -221,7 +221,7 @@ def save_current_year_team_pitcher_data():
 
     save_df(
         df,
-        os.path.join(DATASET_NAME,TEAM_DATASET_NAME,"pitcher",f"Team_Pitcher_{year}.parquet"),
+        os.path.join(DATASET_NAME,CURRENT_DATASET_NAME,CURRENT_YEAR,TEAM_DATASET_NAME,"pitcher",f"Team_Pitcher_{year}.parquet"),
         os.path.join(TEAM_DATASET_DIR,"pitcher",f"Team_Pitcher_{year}.parquet")
     )
 

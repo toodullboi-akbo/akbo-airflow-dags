@@ -90,7 +90,7 @@ def save_current_year_team_runner_data():
 
     save_df(
         df,
-        os.path.join(DATASET_NAME,TEAM_DATASET_NAME,"runner",f"Team_Runner_{year}.parquet"),
+        os.path.join(DATASET_NAME,CURRENT_DATASET_NAME,CURRENT_YEAR,TEAM_DATASET_NAME,"runner",f"Team_Runner_{year}.parquet"),
         os.path.join(TEAM_DATASET_DIR,"runner",f"Team_Runner_{year}.parquet")
     )
 

@@ -128,7 +128,7 @@ def get_n_save_whole_year_runner_data() -> set:
 
     save_df(
         df,
-        os.path.join(DATASET_NAME,RUNNER_DATASET_NAME,f"Runner_{year}.parquet"),
+        os.path.join(DATASET_NAME,CURRENT_DATASET_NAME,CURRENT_YEAR,RUNNER_DATASET_NAME,f"Runner_{year}.parquet"),
         os.path.join(RUNNER_DATASET_DIR,f"Runner_{year}.parquet")
     )
 

@@ -152,7 +152,7 @@ def get_n_save_whole_year_batter_data() -> set:
 
     save_df(
         df,
-        os.path.join(DATASET_NAME,BATTER_DATASET_NAME,YEARLY_DATASET_NAME,"basic_1",f"Batter_basic_1_{year}.parquet"),
+        os.path.join(DATASET_NAME,CURRENT_DATASET_NAME,CURRENT_YEAR,BATTER_DATASET_NAME,YEARLY_DATASET_NAME,"basic_1",f"Batter_basic_1_{year}.parquet"),
         os.path.join(BATTER_YEARLY_DATASET_DIR,"basic_1",f"Batter_basic_1_{year}.parquet")
     )
 
@@ -217,7 +217,7 @@ def get_n_save_whole_year_batter_data() -> set:
 
     save_df(
         df,
-        os.path.join(DATASET_NAME,BATTER_DATASET_NAME,YEARLY_DATASET_NAME,"basic_2",f"Batter_basic_2_{year}.parquet"),
+        os.path.join(DATASET_NAME,CURRENT_DATASET_NAME,CURRENT_YEAR,BATTER_DATASET_NAME,YEARLY_DATASET_NAME,"basic_2",f"Batter_basic_2_{year}.parquet"),
         os.path.join(BATTER_YEARLY_DATASET_DIR,"basic_2",f"Batter_basic_2_{year}.parquet")
     )
 
@@ -283,7 +283,7 @@ def get_n_save_whole_year_batter_data() -> set:
 
     save_df(
         df,
-        os.path.join(DATASET_NAME,BATTER_DATASET_NAME,YEARLY_DATASET_NAME,"detail",f"Batter_detail_{year}.parquet"),
+        os.path.join(DATASET_NAME,CURRENT_DATASET_NAME,CURRENT_YEAR,BATTER_DATASET_NAME,YEARLY_DATASET_NAME,"detail",f"Batter_detail_{year}.parquet"),
         os.path.join(BATTER_YEARLY_DATASET_DIR,"detail",f"Batter_detail_{year}.parquet")
     )
 

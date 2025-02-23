@@ -135,7 +135,7 @@ def get_n_save_batter_situation_data(batterID : int, driver):
     situation_dir_path = os.path.join(BATTER_DATASET_DIR, "batter_situation")
     save_df(
         df,
-        os.path.join(DATASET_NAME,BATTER_DATASET_NAME,"batter_situation",f"{batterID}_Situation.parquet"),
+        os.path.join(DATASET_NAME,CURRENT_DATASET_NAME,CURRENT_YEAR,BATTER_DATASET_NAME,"batter_situation",f"{batterID}_Situation.parquet"),
         os.path.join(situation_dir_path, f"{batterID}_Situation.parquet")
     )
 

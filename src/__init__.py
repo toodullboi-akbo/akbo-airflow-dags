@@ -7,6 +7,19 @@ import pandas as pd
 from io import StringIO
 import requests
 from datetime import datetime
+##################################################################
+
+CURRENT_YEAR =  "2024" # str(datetime.now().year)
+LEGACY_YEAR = "2001" # LEGACY start year ( from beginnig to 2001 )
+MIN_YEAR = LEGACY_YEAR # MIN_YEAR + 1 까지 저장함
+TEAM_MIN_YEAR = "2000"
+CONST_SLEEP_TIME = 3
+###############
+NUM_PROCESS = 3
+SLEEP_TIME_BEFORE_RETRY = 5
+MAX_RETRIES = 3
+###############
+
 
 ##################################################################
 ###############
@@ -52,6 +65,8 @@ LEGACY_DATASET_NAME = "legacy"
 YEARLY_DATASET_NAME = "yearly"
 VERSUS_DATASET_NAME = "versus"
 
+CURRENT_DATASET_NAME = "current"
+
 DATASET_DIR = ""
 BATTER_DATASET_DIR = ""
 PITCHER_DATASET_DIR = ""
@@ -63,11 +78,19 @@ PITCHER_YEARLY_DATASET_DIR = ""
 PITCHER_LEGACY_DATASET_DIR = ""
 TEAM_DATASET_DIR = ""
 VERSUS_DATASET_DIR = ""
+CURRENT_DATASET_DIR = ""
+CURRENT_YEAR_DATASET_DIR = ""
 
 if not IS_BLOB:
     DATASET_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), DATASET_NAME)
     if not os.path.exists(DATASET_DIR):
         os.mkdir(DATASET_DIR)
+    CURRENT_DATASET_DIR = os.path.join(DATASET_DIR, CURRENT_DATASET_NAME)
+    if not os.path.exists(CURRENT_DATASET_DIR):
+        os.mkdir(CURRENT_DATASET_DIR)
+    CURRENT_YEAR_DATASET_DIR = os.path.join(CURRENT_DATASET_DIR, CURRENT_YEAR)
+    if not os.path.exists(CURRENT_YEAR_DATASET_DIR):
+        os.mkdir(CURRENT_YEAR_DATASET_DIR)
     BATTER_DATASET_DIR = os.path.join(DATASET_DIR, BATTER_DATASET_NAME)
     if not os.path.exists(BATTER_DATASET_DIR):
         os.mkdir(BATTER_DATASET_DIR)
@@ -123,17 +146,6 @@ else:
     CURRENT_PITCHER_NUMBER_NAME_PATH = os.path.join(DATASET_DIR,"Current_Pitcher_Number.csv")
 
 ###############
-CURRENT_YEAR =  "2024" # str(datetime.now().year)
-LEGACY_YEAR = "2001" # LEGACY start year ( from beginnig to 2001 )
-MIN_YEAR = LEGACY_YEAR # MIN_YEAR + 1 까지 저장함
-TEAM_MIN_YEAR = "2000"
-CONST_SLEEP_TIME = 3
-###############
-NUM_PROCESS = 3
-SLEEP_TIME_BEFORE_RETRY = 5
-MAX_RETRIES = 3
-###############
-
 ### Functions ###
 def save_df(df, blob_name_path,local_file_path):
     if IS_BLOB:

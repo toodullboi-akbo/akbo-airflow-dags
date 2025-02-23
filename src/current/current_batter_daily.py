@@ -152,7 +152,7 @@ def get_n_save_batter_daily_data(batterID : int, driver):
     daily_dir_path = os.path.join(BATTER_DATASET_DIR, "batter_daily")
     save_df(
         df,
-        os.path.join(DATASET_NAME,BATTER_DATASET_NAME,"batter_daily",f"{batterID}_Daily.parquet"),
+        os.path.join(DATASET_NAME,CURRENT_DATASET_NAME,CURRENT_YEAR,BATTER_DATASET_NAME,"batter_daily",f"{batterID}_Daily.parquet"),
         os.path.join(daily_dir_path, f"{batterID}_Daily.parquet")
     )
 

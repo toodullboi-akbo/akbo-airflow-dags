@@ -204,7 +204,7 @@ def get_n_save_whole_year_pitcher_data() -> set:
 
     save_df(
         df,
-        os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,YEARLY_DATASET_NAME,"basic_2",f"Pitcher_basic_2_{year}.parquet"),
+        os.path.join(DATASET_NAME,CURRENT_DATASET_NAME,CURRENT_YEAR,PITCHER_DATASET_NAME,YEARLY_DATASET_NAME,"basic_2",f"Pitcher_basic_2_{year}.parquet"),
         os.path.join(PITCHER_YEARLY_DATASET_DIR,"basic_2",f"Pitcher_basic_2_{year}.parquet")
     )
 
@@ -290,7 +290,7 @@ def get_n_save_whole_year_pitcher_data() -> set:
 
     save_df(
         df,
-        os.path.join(DATASET_NAME,PITCHER_DATASET_NAME,YEARLY_DATASET_NAME,"detail_1",f"Pitcher_detail_1_{year}.parquet"),
+        os.path.join(DATASET_NAME,CURRENT_DATASET_NAME,CURRENT_YEAR,PITCHER_DATASET_NAME,YEARLY_DATASET_NAME,"detail_1",f"Pitcher_detail_1_{year}.parquet"),
         os.path.join(PITCHER_YEARLY_DATASET_DIR,"detail_1",f"Pitcher_detail_1_{year}.parquet")
     )
 

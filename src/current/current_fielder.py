@@ -154,7 +154,7 @@ def get_n_save_whole_year_fielding_data() -> set:
 
     save_df(
         df,
-        os.path.join(DATASET_NAME,FIELDER_DATASET_NAME,f"Fielding_{year}.parquet"),
+        os.path.join(DATASET_NAME,CURRENT_DATASET_NAME,CURRENT_YEAR,FIELDER_DATASET_NAME,f"Fielding_{year}.parquet"),
         os.path.join(FIELDING_DATASET_DIR,f"Fielding_{year}.parquet")
     )
 

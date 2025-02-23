@@ -200,7 +200,7 @@ def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : i
 
             save_df(
                 df,
-                os.path.join(DATASET_NAME,VERSUS_DATASET_NAME,f"Versus_pitcher_{year}_{selected_pitcher_id}.parquet"),
+                os.path.join(DATASET_NAME,CURRENT_DATASET_NAME,CURRENT_YEAR,VERSUS_DATASET_NAME,f"Versus_pitcher_{year}_{selected_pitcher_id}.parquet"),
                 os.path.join(VERSUS_DATASET_DIR,f"Versus_pitcher_{year}_{selected_pitcher_id}.parquet")
             )
 
