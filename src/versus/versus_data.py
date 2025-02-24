@@ -45,9 +45,9 @@ def wait_for_all_option_to_be_populated():
 
 
 
-def pitcher_versus_batter_work(team_start_idx : int, team_end_idx : int, attempt : int):
+def pitcher_versus_batter_work(team_start_idx : int, team_end_idx : int, attempt : int, driver):
     try:
-        save_whole_pitcher_versus_batter_data(team_start_idx, team_end_idx)
+        save_whole_pitcher_versus_batter_data(team_start_idx, team_end_idx, driver)
         exit(0)
     except Exception as e:
         if attempt < MAX_RETRIES:
@@ -55,14 +55,14 @@ def pitcher_versus_batter_work(team_start_idx : int, team_end_idx : int, attempt
                 print(item)
             print("let's retry")
             time.sleep(SLEEP_TIME_BEFORE_RETRY)
-            pitcher_versus_batter_work(team_start_idx, team_end_idx, attempt=attempt+1)
+            pitcher_versus_batter_work(team_start_idx, team_end_idx, attempt=attempt+1, driver=driver)
         else:
             print("exceed retry limit")
             exit(1)
 
 
 
-def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : int):
+def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : int, driver):
     def set_initial_page_setting() :
         driver.get('https://www.koreabaseball.com/Record/Etc/HitVsPit.aspx')
         driver.implicitly_wait(3)
@@ -207,7 +207,22 @@ def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : i
     return 0
 
 if __name__ == "__main__":
+    drivers = [driver]
     try :
+        if NUM_PROCESS > 1:
+            if IS_BLOB:
+                for i in range(NUM_PROCESS-1):
+                    d = webdriver.Remote(
+                        command_executor=command_executor_url,
+                        options=options
+                    )
+                    drivers.append(d)
+            else:
+                for i in range(NUM_PROCESS-1):
+                    d = webdriver.Chrome(options=options)
+                    drivers.append(d)
+
+
         st_time = time.time()
         NUMBER_OF_TEAM = 10
         coef = 10 // NUM_PROCESS
@@ -215,9 +230,9 @@ if __name__ == "__main__":
 
         for i in range(0, NUM_PROCESS):
             if i == NUM_PROCESS-1 : 
-                process_list.append(Process(target=pitcher_versus_batter_work, args=(1+i*coef,11,1)))
+                process_list.append(Process(target=pitcher_versus_batter_work, args=(1+i*coef,11,1,drivers[i])))
             else : 
-                process_list.append(Process(target=pitcher_versus_batter_work, args=(1+i*coef,1+coef+i*coef,1)))
+                process_list.append(Process(target=pitcher_versus_batter_work, args=(1+i*coef,1+coef+i*coef,1,drivers[i])))
                 
         for process in process_list:
             process.start()
@@ -231,4 +246,5 @@ if __name__ == "__main__":
 
 
     finally:
-        driver.quit()
+        for d in drivers:
+            d.quit()
