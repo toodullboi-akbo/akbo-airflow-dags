@@ -61,7 +61,7 @@ def get_n_save_pitcher_situation_data(pitcherID : int, driver):
     # driver.implicitly_wait(3)
     set_initial_page_setting()
     position_preference_data = driver.find_element(by=By.ID, value = 'cphContents_cphContents_cphContents_playerProfile_lblPosition')
-    position_text = position_preference_data.text.split('(')[0] if len(position_preference_data.text.split('(')[0])>0 else "-"
+    position_text = position_preference_data.text.split('(')[0] if len(position_preference_data.text.split('(')[0])>0 else "불명"
     preference_text = position_preference_data.text.split('(')[1][:-1]
     throwing_text = preference_text[0:2]
     hitting_text = preference_text[2:]
