@@ -9,7 +9,7 @@ spec:
   image: customairflowdocker.azurecr.io/airflow-spark-operator:latest
   imagePullPolicy: Always
   mainClass: akbo.main.statMain
-  mainApplicationFile: "local:///opt/spark/jars/kbo-data-handler_2.12-1.1.0.jar"
+  mainApplicationFile: "local:///opt/spark/jars/kbo-data-handler_2.12-1.2.0.jar"
   sparkVersion: "3.5.2"
   restartPolicy:
     type: OnFailure
