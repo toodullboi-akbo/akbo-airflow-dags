@@ -35,7 +35,7 @@ spec:
 
 
   driver:
-    cores: 2
+    cores: 1
     memory: "2G"
     labels:
       version: 3.5.2
