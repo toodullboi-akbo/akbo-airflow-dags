@@ -9,6 +9,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
+from selenium.common import NoSuchSessionException
 import datetime
 import time
 from multiprocessing import Process, Manager
@@ -223,5 +224,9 @@ if __name__ == "__main__":
 
         print(f"{end_time-st_time} s")
     finally:
-        for d in drivers:
-            d.quit()
+        try:
+            for d in drivers:
+                d.quit()
+        except NoSuchSessionException:
+            print("k")
+        
