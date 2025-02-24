@@ -19,7 +19,7 @@ with DAG(
     submit_spark_job = SparkKubernetesOperator(
         task_id = "submit_spark_job",
         namespace = "airflow",
-        application_file = "/opt/airflow/dags/repo/src/spark/spark-submit-player-team-stats.yaml",
+        application_file = "/src/spark/spark-submit-player-team-stats.yaml",
         kubernetes_conn_id = "spark_operator_connection"
     )
 
