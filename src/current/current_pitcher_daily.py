@@ -11,13 +11,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 import datetime
 import time
-from multiprocessing import Process, Manager
+from multiprocessing import Process, Manager, Queue
 from fractions import Fraction
 
 DYNAMIC_SLEEP_TIME = CONST_SLEEP_TIME
 #####
 
-def pitcher_daily_work(shared_number_list, index : int, attempt : int, driver):
+def pitcher_daily_work(shared_number_list, index : int, attempt : int, driver, queue):
     '''
     multiprocessing 돌리는 함수
     '''
@@ -29,6 +29,7 @@ def pitcher_daily_work(shared_number_list, index : int, attempt : int, driver):
             print(f"Process-{index} processing: {pitcherID}")
             get_n_save_pitcher_daily_data(pitcherID,driver)
             shared_number_list.pop(0)
+        queue.put(0)
         exit(0)
     except Exception as e:
         if attempt < MAX_RETRIES:
@@ -38,9 +39,10 @@ def pitcher_daily_work(shared_number_list, index : int, attempt : int, driver):
                 print(item)
             print("let's retry")
             time.sleep(SLEEP_TIME_BEFORE_RETRY)
-            pitcher_daily_work(shared_number_list, index, attempt=attempt+1, driver=driver)
+            pitcher_daily_work(shared_number_list, index, attempt=attempt+1, driver=driver, queue=queue)
         else:
             print("exceed retry limit")
+            queue.put(1)
             exit(1)
 
 
@@ -192,8 +194,9 @@ if __name__ == "__main__":
         shared_number_list = [] # number_list 쪼개서 보관 예정
 
         split_index = len(pitcher_number_list)//NUM_PROCESS
-
         process_list = []
+        queue = Queue()
+
         for i in range(0, NUM_PROCESS):
             if i == NUM_PROCESS-1 : 
                 shared_number_list.append(manager.list(pitcher_number_list[split_index*i:]))
@@ -202,12 +205,19 @@ if __name__ == "__main__":
         
         for i in range(0, NUM_PROCESS):
             if i == NUM_PROCESS-1 : 
-                process_list.append(Process(target=pitcher_daily_work, args=(shared_number_list[i],i,1,drivers[i])))
+                process_list.append(Process(target=pitcher_daily_work, args=(shared_number_list[i],i,1,drivers[i],queue)))
             else : 
-                process_list.append(Process(target=pitcher_daily_work, args=(shared_number_list[i],i,1,drivers[i])))
+                process_list.append(Process(target=pitcher_daily_work, args=(shared_number_list[i],i,1,drivers[i],queue)))
                 
         for process in process_list:
             process.start()
+
+        for _ in range(NUM_PROCESS):
+            if queue.get() == 1:
+                print("Error !! Terminating all process.")
+                for process in process_list:
+                    process.terminate()
+                break
         
         for process in process_list:
             process.join()

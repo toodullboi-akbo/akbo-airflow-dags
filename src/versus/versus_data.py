@@ -235,10 +235,9 @@ if __name__ == "__main__":
         for process in process_list:
             process.start()
 
-        # Monitor for exit(1) and terminate if found
         for _ in range(NUM_PROCESS):
             if queue.get() == 1:
-                print("Error !! Terminating all processes.")
+                print("Error !! Terminating all process.")
                 for process in process_list:
                     process.terminate()
                 break
