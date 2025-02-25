@@ -13,7 +13,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 import datetime
 import time
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 
 def wait_element_for_click(WAIT, BY, VALUE):
     return WAIT.until(EC.element_to_be_clickable((BY, VALUE)))
@@ -36,9 +36,10 @@ def wait_for_page_reload(WAIT, old_element):
 
 
 
-def pitcher_versus_batter_work(team_start_idx : int, team_end_idx : int, attempt : int, driver):
+def pitcher_versus_batter_work(team_start_idx : int, team_end_idx : int, attempt : int, driver, queue):
     try:
         save_whole_pitcher_versus_batter_data(team_start_idx, team_end_idx, driver)
+        queue.put(0)
         exit(0)
     except Exception as e:
         if attempt < MAX_RETRIES:
@@ -46,9 +47,10 @@ def pitcher_versus_batter_work(team_start_idx : int, team_end_idx : int, attempt
                 print(item)
             print("let's retry")
             time.sleep(SLEEP_TIME_BEFORE_RETRY)
-            pitcher_versus_batter_work(team_start_idx, team_end_idx, attempt=attempt+1, driver=driver)
+            pitcher_versus_batter_work(team_start_idx, team_end_idx, attempt=attempt+1, driver=driver,queue=queue)
         else:
             print("exceed retry limit")
+            queue.put(1)
             exit(1)
 
 
@@ -216,18 +218,31 @@ if __name__ == "__main__":
 
 
         st_time = time.time()
+
         NUMBER_OF_TEAM = 10
+
         coef = 10 // NUM_PROCESS
         process_list = []
+        queue = Queue()
+
 
         for i in range(0, NUM_PROCESS):
             if i == NUM_PROCESS-1 : 
-                process_list.append(Process(target=pitcher_versus_batter_work, args=(1+i*coef,11,1,drivers[i])))
+                process_list.append(Process(target=pitcher_versus_batter_work, args=(1+i*coef,11,1,drivers[i],queue)))
             else : 
-                process_list.append(Process(target=pitcher_versus_batter_work, args=(1+i*coef,1+coef+i*coef,1,drivers[i])))
+                process_list.append(Process(target=pitcher_versus_batter_work, args=(1+i*coef,1+coef+i*coef,1,drivers[i],queue)))
                 
         for process in process_list:
             process.start()
+
+        # Monitor for exit(1) and terminate if found
+        for _ in range(NUM_PROCESS):
+            if queue.get() == 1:
+                print("Error !! Terminating all processes.")
+                for process in process_list:
+                    process.terminate()
+                break
+
         
         for process in process_list:
             process.join()
