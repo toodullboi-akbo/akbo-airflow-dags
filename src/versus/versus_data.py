@@ -14,34 +14,25 @@ from selenium.webdriver.support import expected_conditions as EC
 import datetime
 import time
 from multiprocessing import Process
-WAIT = WebDriverWait(driver, 10)
-def wait_element_for_click(BY, VALUE):
+
+def wait_element_for_click(WAIT, BY, VALUE):
     return WAIT.until(EC.element_to_be_clickable((BY, VALUE)))
 
-def select_dropdown_wait(BY, VALUE, index):
-    dropdown = Select(wait_element_for_click(BY, VALUE))
+def select_dropdown_wait(WAIT, BY, VALUE, index):
+    dropdown = Select(wait_element_for_click(WAIT, BY, VALUE))
     old_element = dropdown.first_selected_option  # Store reference to the old selection
     dropdown.select_by_index(index)
-    wait_for_page_reload(old_element)  # Wait for page reload
+    wait_for_page_reload(WAIT, old_element)  # Wait for page reload
 
-    return Select(wait_element_for_click(BY, VALUE))  # Re-locate dropdown
+    return Select(wait_element_for_click(WAIT, BY, VALUE))  # Re-locate dropdown
 
-def wait_for_page_reload(old_element):
+def wait_for_page_reload(WAIT, old_element):
     try :
         WAIT.until(EC.staleness_of(old_element))
     except TimeoutException:
         return
  
 
-def wait_element_for_selected_attribute(BY, VALUE):
-    return WAIT.until(EC.element_attribute_to_include((BY, VALUE),"selected"))
-
-def wait_for_all_select_to_be_populated():
-    objct = WAIT.until(EC.presence_of_all_elements_located((By.TAG_NAME, "select")))
-    print(objct)
-    exit(0)
-def wait_for_all_option_to_be_populated():
-     WAIT.until(EC.presence_of_all_elements_located((By.TAG_NAME, "option")))
 
 
 
@@ -67,20 +58,21 @@ def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : i
         driver.get('https://www.koreabaseball.com/Record/Etc/HitVsPit.aspx')
         driver.implicitly_wait(3)
 
-
+    #############################
+    WAIT = WebDriverWait(driver, 10)
     #############################
     set_initial_page_setting()
 
-    pitcher_team_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherTeam'))
+    pitcher_team_selector = Select(wait_element_for_click(WAIT, By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherTeam'))
     for pitcher_team_idx in range(team_start_idx, team_end_idx):
-        pitcher_team_selector = select_dropdown_wait(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherTeam', pitcher_team_idx)
+        pitcher_team_selector = select_dropdown_wait(WAIT, By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherTeam', pitcher_team_idx)
         selected_pitcher_team = pitcher_team_selector.first_selected_option.text
 
         print(f"process with {team_start_idx} selected_pitcher_team :: {selected_pitcher_team}")
 
-        pitcher_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherPlayer'))
+        pitcher_selector = Select(wait_element_for_click(WAIT, By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherPlayer'))
         for pitcher_idx in range(1, len(pitcher_selector.options)):
-            pitcher_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherPlayer'))
+            pitcher_selector = Select(wait_element_for_click(WAIT, By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlPitcherPlayer'))
             pitcher_selector.select_by_index(pitcher_idx)
             selected_pitcher = pitcher_selector.first_selected_option.text
             selected_pitcher_id = pitcher_selector.first_selected_option.get_attribute("value")
@@ -90,19 +82,19 @@ def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : i
 
             pitcher_versus_data = []
 
-            batter_team_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterTeam'))
+            batter_team_selector = Select(wait_element_for_click(WAIT, By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterTeam'))
             for batter_team_idx in range(1, len(batter_team_selector.options)):
-                batter_team_selector = select_dropdown_wait(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterTeam',batter_team_idx)
+                batter_team_selector = select_dropdown_wait(WAIT, By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterTeam',batter_team_idx)
 
                 selected_batter_team = batter_team_selector.first_selected_option.text
 
                 if(selected_batter_team == selected_pitcher_team) : continue
-                batter_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterPlayer'))
+                batter_selector = Select(wait_element_for_click(WAIT, By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterPlayer'))
                 old_element_batter = batter_selector.first_selected_option
 
                 batter_len = len(batter_selector.options)
                 for batter_idx in range(1, batter_len):
-                    batter_selector = Select(wait_element_for_click(By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterPlayer'))
+                    batter_selector = Select(wait_element_for_click(WAIT, By.NAME, 'ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlHitterPlayer'))
                     batter_selector.select_by_index(batter_idx)
                     old_element_batter = batter_selector.first_selected_option
                     selected_batter = old_element_batter.text
