@@ -9,7 +9,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, InvalidSessionIdException
 import datetime
 import time
 from multiprocessing import Process
@@ -333,4 +333,7 @@ if __name__ == "__main__":
 
 
     finally:
-        driver.quit()
+        try:
+            driver.quit()
+        except InvalidSessionIdException:
+            print("session already closed, skip. .. ")

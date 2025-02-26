@@ -11,6 +11,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import InvalidSessionIdException
 import datetime
 import time
 from multiprocessing import Process, Queue
@@ -254,4 +255,7 @@ if __name__ == "__main__":
 
     finally:
         for d in drivers:
-            d.quit()
+            try:
+                d.quit()
+            except InvalidSessionIdException:
+                print("session already closed, skip. .. ")
