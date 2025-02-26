@@ -202,7 +202,7 @@ def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : i
 
 if __name__ == "__main__":
     drivers = [driver]
-    NUM_PROCESS = 5
+    NUM_PROCESS = 10
     try :
         if NUM_PROCESS > 1:
             if IS_BLOB:
