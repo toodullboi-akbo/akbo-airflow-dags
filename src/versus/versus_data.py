@@ -201,8 +201,6 @@ def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : i
     return 0
 
 if __name__ == "__main__":
-    NUM_PROCESS = 5
-
     drivers = [driver]
     try :
         if NUM_PROCESS > 1:
