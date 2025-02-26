@@ -36,7 +36,7 @@ spec:
 
   driver:
     cores: 1
-    memory: "4G"
+    memory: "2G"
     labels:
       version: 3.5.2
     serviceAccount: spark
@@ -46,7 +46,7 @@ spec:
   executor:
     cores: 1
     instances: 4
-    memory: "4G"
+    memory: "2G"
     env:
       - name: SPARK_SUBMIT_OPTS
         value: "-Dspark.jars.ivy=/tmp/ivy-cache"
