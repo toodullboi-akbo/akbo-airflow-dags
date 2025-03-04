@@ -19,7 +19,7 @@ with DAG(
     dag_id = "Current_Year_KBO_versus_Crawler",
     default_args=default_args,
     description = "crawls current year versus data from kbo",
-    schedule_interval="0 6 * * 1",
+    schedule_interval="0 6 * * 2",
     max_active_runs=1,
     catchup=False
 ) as dag:
