@@ -9,7 +9,7 @@ import requests
 from datetime import datetime
 ##################################################################
 
-CURRENT_YEAR =  "2024" # str(datetime.now().year)
+CURRENT_YEAR =  "2025" # str(datetime.now().year)
 LEGACY_YEAR = "2001" # LEGACY start year ( from beginnig to 2001 )
 MIN_YEAR = LEGACY_YEAR # MIN_YEAR + 1 까지 저장함
 TEAM_MIN_YEAR = "2000"
