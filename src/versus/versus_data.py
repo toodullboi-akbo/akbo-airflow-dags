@@ -5,6 +5,7 @@ parent = os.path.dirname(current)
 sys.path.append(parent)
 
 from __init__ import *
+from airflow.exceptions import AirflowFailException
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -113,7 +114,7 @@ def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : i
                         pass
 
                     year_element = WAIT.until(EC.presence_of_element_located((By.ID, 'cphContents_cphContents_cphContents_lblLastDate')))
-                    year = year_element.text[:-1]
+                    year = year_element.text.split()[0][:-1]
 
                     td_data = WAIT.until(EC.presence_of_all_elements_located((By.TAG_NAME,"td")))
 
@@ -203,6 +204,7 @@ def save_whole_pitcher_versus_batter_data(team_start_idx : int, team_end_idx : i
 
 if __name__ == "__main__":
     drivers = [driver]
+    fail_flag = False
     NUM_PROCESS = 10
     try :
         if NUM_PROCESS > 1:
@@ -240,6 +242,7 @@ if __name__ == "__main__":
         for _ in range(NUM_PROCESS):
             if queue.get() == 1:
                 print("Error !! Terminating all process.")
+                fail_flag = True
                 for process in process_list:
                     process.terminate()
                 break
@@ -248,6 +251,8 @@ if __name__ == "__main__":
         for process in process_list:
             process.join()
 
+        if fail_flag:
+            raise AirflowFailException("Intentional Failure")
             
         end_time = time.time()
         print(f"{end_time-st_time} s")

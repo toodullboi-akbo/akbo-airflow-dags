@@ -24,7 +24,7 @@ with DAG(
     catchup=False
 ) as dag:
     current_versus_task = BashOperator(
-        task_id = "current_batter_yearly",
+        task_id = "current_versus_data",
         bash_command="python /opt/airflow/dags/repo/src/versus/versus_data.py"
     )
 
