@@ -14,6 +14,8 @@ import datetime
 import time
 from multiprocessing import Process, Manager, Queue
 from fractions import Fraction
+from airflow.exceptions import AirflowFailException
+
 
 DYNAMIC_SLEEP_TIME = CONST_SLEEP_TIME
 #####
@@ -156,6 +158,7 @@ def get_n_save_pitcher_daily_data(pitcherID : int, driver):
 
 if __name__ == "__main__":
     drivers = [driver]
+    fail_flag = False
     try:
         if NUM_PROCESS > 1:
             if IS_BLOB:
@@ -218,10 +221,16 @@ if __name__ == "__main__":
                 print("Error !! Terminating all process.")
                 for process in process_list:
                     process.terminate()
+                fail_flag = True
+
                 break
         
         for process in process_list:
             process.join()
+
+        if fail_flag:
+            raise AirflowFailException("Intentional Failure")
+            
 
         end_time = time.time()
 

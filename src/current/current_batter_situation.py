@@ -10,6 +10,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 from selenium.common.exceptions import InvalidSessionIdException
+from airflow.exceptions import AirflowFailException
 
 import datetime
 import time
@@ -147,6 +148,8 @@ def get_n_save_batter_situation_data(batterID : int, driver):
 
 if __name__ == "__main__" :
     drivers = [driver]
+    fail_flag = False
+
     try:
         if NUM_PROCESS > 1:
             if IS_BLOB:
@@ -209,10 +212,15 @@ if __name__ == "__main__" :
                 print("Error !! Terminating all process.")
                 for process in process_list:
                     process.terminate()
+                fail_flag = True
                 break
 
         for process in process_list:
             process.join()
+
+        if fail_flag:
+            raise AirflowFailException("Intentional Failure")
+            
 
         end_time = time.time()
 
