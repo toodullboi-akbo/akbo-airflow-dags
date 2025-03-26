@@ -17,7 +17,7 @@ CONST_SLEEP_TIME = 3
 ###############
 NUM_PROCESS = 3
 SLEEP_TIME_BEFORE_RETRY = 5
-MAX_RETRIES = 3
+MAX_RETRIES = 5
 ###############
 
 
